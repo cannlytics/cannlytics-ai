@@ -418,7 +418,7 @@ def get_state_current_population(state_data):
     }
 
 
-def get_cannabis_data_daily(event, context):
+def get_cannabis_data(event, context):
     """Triggered from a message on a Cloud Pub/Sub topic.
     Args:
          event (dict): Event payload.

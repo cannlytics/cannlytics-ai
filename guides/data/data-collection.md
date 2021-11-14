@@ -4,56 +4,55 @@ Cannlytics strives to be the go-to source of public cannabis data. Cannlytics wi
 
 | State | Abbreviation | Cannabis Data | Data Collection Routine |
 |-------|--------------|---------------|-------------------------|
-|  Alabama  |  AL  | ? |  |
-|  Alaska  |  AK  | ? |  |
-|  Arizona  |  AZ  | Yes | 🟡 |
-|  Arkansas  |  AR  | ? |  |
-|  California  |  CA  | Yes | 🟡 |
-|  Canal Zone  |  CZ  | ? |  |
-|  Colorado  |  CO  | Yes | 🟡 |
-|  Connecticut  |  CT  | Yes | 🟡 |
-|  Delaware  |  DE  | ? |  |
-|  District of Columbia  |  DC  | ? |  |
-|  Florida  |  FL  | ? |  |
-|  Georgia  |  GA  | ? |  |
-|  Hawaii  |  HI  | ? |  |
-|  Idaho  |  ID  | ? |  |
-|  Illinois  |  IL  | Yes | 🟡 |
-|  Indiana  |  IN  | No |  |
-|  Iowa  |  IA  | No |  |
-|  Kansas  |  KS  | No |  |
-|  Kentucky  |  KY  | ? |  |
-|  Louisiana  |  LA  | ? |  |
-|  Maine  |  ME  | Yes | 🟡 |
-|  Maryland  |  MD  | Yes | 🟡 |
-|  Massachusetts  |  MA  | Yes | 🟡 |
-|  Michigan  |  MI  | Yes | 🟡 |
-|  Minnesota  |  MN  | ? |  |
-|  Mississippi  |  MS  | ? |  |
-|  Missouri  |  MO  | ? |  |
-|  Montana  |  MT  | Yes | 🟡 |
-|  Nebraska  |  NE  | ? |  |
-|  Nevada  |  NV  | Yes | 🟡 |
-|  New Hampshire  |  NH  | ? |  |
-|  New Jersey  |  NJ  | ? |  |
-|  New Mexico  |  NM  | ? |  |
-|  New York  |  NY  | ? |  |
-|  North Carolina  |  NC  | No |  |
-|  North Dakota  |  ND  | ? |  |
-|  Ohio  |  OH  | ? |  |
-|  Oklahoma  |  OK  | Yes | 🟡 |
-|  Oregon  |  OR  | Yes | 🟡 |
-|  Pennsylvania  |  PA  | ? |  |
-|  Puerto Rico  |  PR  | ? |  |
-|  Rhode Island  |  RI  | ? |  |
-|  South Carolina  |  SC  | ? |  |
-|  South Dakota  |  SD  | ? |  |
-|  Tennessee  |  TN  | No |  |
-|  Texas  |  TX  | No |  |
-|  Utah  |  UT  | No |  |
-|  Vermont  |  VT  | ? |  |
-|  Virginia  |  VA  | ? |  |
-|  Washington  |  WA  | ? |  |
-|  West Virginia  |  WV  | ? |  |
-|  Wisconsin  |  WI  | No |  |
-|  Wyoming  |  WY  | No |  |
+|  Alabama |  AL  | No |  |
+|  [Alaska](./data-collection-ak.md) |  AK  | Yes | In progress |
+|  [Arizona](./data-collection-az.md) |  AZ  | Yes | In progress |
+|  Arkansas |  AR  | No |  |
+|  [California](./data-collection-ca.md) |  CA  | Yes | In progress |
+|  [Colorado](./data-collection-co.md) |  CO  | Yes | In progress |
+|  [Connecticut](./data-collection-ct.md) |  CT  | Yes | In progress |
+|  Delaware |  DE  | ? |  |
+|  District of Columbia |  DC  | Maybe |  |
+|  [Florida](./data-collection-fl.md) |  FL  | ? |  |
+|  Georgia |  GA  | Maybe |  |
+|  Hawaii |  HI  | Maybe |  |
+|  Idaho |  ID  | No |  |
+|  [Illinois](./data-collection-il.md) |  IL  | Yes | In progress |
+|  Indiana |  IN  | No |  |
+|  Iowa |  IA  | No |  |
+|  Kansas |  KS  | No |  |
+|  Kentucky |  KY  | Maybe |  |
+|  [Louisiana](./data-collection-la.md) |  LA  | Maybe |  |
+|  [Maine](./data-collection-me.md) |  ME  | Yes | In progress |
+|  [Maryland](./data-collection-md.md) |  MD  | Yes | In progress |
+|  [Massachusetts](./data-collection-ma.md) |  MA  | Yes | In progress |
+|  [Michigan](./data-collection-mi.md) |  MI  | Yes | In progress |
+|  Minnesota |  MN  | No |  |
+|  Mississippi |  MS  | No |  |
+|  Missouri |  MO  | No |  |
+|  [Montana](./data-collection-mt.md) |  MT  | Yes | In progress |
+|  Nebraska |  NE  | No |  |
+|  [Nevada](./data-collection-nv.md) |  NV  | Yes | In progress |
+|  New Hampshire |  NH  | Maybe |  |
+|  New Jersey |  NJ  | Maybe |  |
+|  New Mexico |  NM  | Maybe |  |
+|  New York |  NY  | Maybe |  |
+|  North Carolina |  NC  | No |  |
+|  North Dakota |  ND  | No |  |
+|  [Ohio](./data-collection-oh.md) |  OH  | Maybe |  |
+|  [Oklahoma](./data-collection-ok.md) |  OK  | Yes | In progress |
+|  [Oregon](./data-collection-or.md) |  OR  | Yes | In progress |
+|  Pennsylvania |  PA  | No |  |
+|  Puerto Rico |  PR  | Maybe |  |
+|  Rhode Island |  RI  | Maybe |  |
+|  South Carolina |  SC  | No |  |
+|  South Dakota |  SD  | No |  |
+|  Tennessee |  TN  | No |  |
+|  Texas |  TX  | No |  |
+|  Utah |  UT  | No |  |
+|  Vermont |  VT  | Maybe |  |
+|  Virginia |  VA  | Maybe |  |
+|  [Washington](./data-collection-wa.md) |  WA  | Maybe | In progress |
+|  West Virginia |  WV  | Maybe |  |
+|  Wisconsin |  WI  | No |  |
+|  Wyoming |  WY  | No |  |
