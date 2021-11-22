@@ -1,11 +1,12 @@
 """
-Get Connecticut (CT) Data | Cannlytics
+Get Cannabis Data for Connecticut
+Copyright (c) 2021 Cannlytics
 
 Author: Keegan Skeate
 Contact: <keegan@cannlytics.com>
 Created: 9/16/2021
 Updated: 9/18/2021
-License: MIT License <https://opensource.org/licenses/MIT>
+License: MIT License <https://github.com/cannlytics/cannlytics-ai/blob/main/LICENSE>
 
 Data Sources:
     Connecticut Medical Marijuana Brand Registry: https://data.ct.gov/Health-and-Human-Services/Medical-Marijuana-Brand-Registry/egd5-wb6r/data

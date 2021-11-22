@@ -5,7 +5,7 @@ Author: Keegan Skeate
 Contact: <keegan@cannlytics.com>
 Created: 
 Updated: 
-License: MIT License <https://opensource.org/licenses/MIT>
+License: MIT License <https://github.com/cannlytics/cannlytics-ai/blob/main/LICENSE>
 """
 
 

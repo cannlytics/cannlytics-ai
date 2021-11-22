@@ -1,10 +1,11 @@
 """
-Get Massachussets Data | Cannlytics
+Get Massachussets Data
+Copyright (c) 2021 Cannlytics
 
 Authors: Keegan Skeate <keegan@cannlytics.com>
 Created: 9/20/2021
 Updated: 10/4/2021
-License: MIT License <https://opensource.org/licenses/MIT>
+License: MIT License <https://github.com/cannlytics/cannlytics-ai/blob/main/LICENSE>
 """
 # Standard imports
 from datetime import datetime

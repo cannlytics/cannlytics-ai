@@ -1,10 +1,11 @@
 """
-Get Cannabis Data for Maine | Cannlytics
+Get Cannabis Data for Maine
+Copyright (c) 2021 Cannlytics
 
 Authors: Keegan Skeate <keegan@cannlytics.com>
 Created: 9/23/2021
 Updated: 10/5/2021
-License: MIT License <https://opensource.org/licenses/MIT>
+License: MIT License <https://github.com/cannlytics/cannlytics-ai/blob/main/LICENSE>
 
 Data Sources:
     

@@ -1,5 +1,30 @@
 {
-    "cSpell.words": [
-        "Quickstart"
-    ]
+  "editor.insertSpaces": true,
+  "editor.tabSize": 2,
+  "cSpell.words": [
+    "Quickstart"
+  ],
+  "files.exclude": {
+    "**/__pycache__": true,
+  },
+  "python.linting.pylintEnabled": true,
+  "[python]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 4,
+    "editor.rulers": [79, 100],
+  },
+  "todo-tree.highlights.customHighlight": {
+    "TODO": {
+      "foreground": "#0BA67F",
+      "iconColour": "green",
+      "rulerColour": "green",
+      "rulerLane": "left"
+    },
+    "FIXME": {
+      "foreground": "orange",
+      "iconColour": "red",
+      "rulerColour": "red",
+      "rulerLane": "left"
+    }
+  },
 }
