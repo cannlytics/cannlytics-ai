@@ -111,3 +111,5 @@ MANIFEST
 
 # Testing
 tmp/
+.coverage
+.coveralls.yml

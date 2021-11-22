@@ -1,12 +1,13 @@
 
 
-<div style="text-align:center; margin-top:1rem; margin-bottom: 1rem;">
-  <img style="max-width:420px" width="100%" alt="" src="https://firebasestorage.googleapis.com/v0/b/cannlytics.appspot.com/o/public%2Fimages%2Flogos%2Fcannlytics_ai_with_text.png?alt=media&token=78d19117-eff5-4f45-a8fa-3bbdabd6917d">
+<div align="center" style="text-align:center; margin-top:1rem; margin-bottom: 1rem;">
+  <img style="max-width:420px" width="420px" alt="" src="https://firebasestorage.googleapis.com/v0/b/cannlytics.appspot.com/o/public%2Fimages%2Flogos%2Fcannlytics_ai_with_text.png?alt=media&token=78d19117-eff5-4f45-a8fa-3bbdabd6917d">
   <div style="margin-top:1rem; margin-bottom:1rem;">
     <h3>Simple, easy, cannabis analytics.</h3>
   </div>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-darkgreen.svg)](https://opensource.org/licenses/MIT)
+[![Coverage Status](https://coveralls.io/repos/github/cannlytics/cannlytics-ai/badge.svg?branch=main)](https://coveralls.io/github/cannlytics/cannlytics-ai?branch=main)
 
 <https://cannlytics.com>
 
@@ -14,7 +15,7 @@
 
 Cannlytics AI is 🔥 Cannlytics-powered artificial intelligence 🤖. Cannlytics strives to be the go-to source of public cannabis data. Cannlytics wishes to use our comparative advantage in aggregating data from disparate resources and provide you with a simple, standardized interface to consume the data.
 
-- [🐱‍👓 Installation](#installation)
+- [🌱 Installation](#installation)
 - [🏃‍♀️ Quickstart](#quickstart)
 - [🔨 Development](#development)
 - [🦾 Automation](#automation)
@@ -22,7 +23,7 @@ Cannlytics AI is 🔥 Cannlytics-powered artificial intelligence 🤖. Cannlytic
 - [❤️ Support](#support)
 - [🏛️ License](#license)
 
-## 🐱‍👓 Installation <a name="installation"></a>
+## 🌱 Installation <a name="installation"></a>
 
 You can simply clone the repository to get your hands on the AI source code.
 
