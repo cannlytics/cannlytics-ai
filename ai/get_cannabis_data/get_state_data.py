@@ -16,9 +16,9 @@ def get_state_current_population(state, api_key=None):
     """Get a given state's latest population from the Fed Fred API,
     getting the number in 1000's and returning the absolute value.
     Args:
-        (str): The state abbreviation for the state to retrieve population
+        state (str): The state abbreviation for the state to retrieve population
             data. The abbreviation can be upper or lower case.
-        (str): A Fed FRED API key. You can sign up for a free API key at
+        api_key (str): A Fed FRED API key. You can sign up for a free API key at
             http://research.stlouisfed.org/fred2/. You can also pass `None`
             and set the environment variable 'FRED_API_KEY' to the value of
             your API key.

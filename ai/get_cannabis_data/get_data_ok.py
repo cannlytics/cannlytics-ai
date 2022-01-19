@@ -13,6 +13,8 @@ Data Sources:
 Resources:
     - [SQ788](https://www.sos.ok.gov/documents/questions/788.pdf)
     - [How to Extract Text from a PDF](https://stackoverflow.com/questions/34837707/how-to-extract-text-from-a-pdf-file/63518022#63518022)
+TODO:
+    * REFACTOR!
 """
 # Standard imports
 from datetime import datetime
@@ -204,6 +206,8 @@ def download_website_pdfs(url, destination):
     for link in soup.select('a[href$=".pdf"]'):
         file_name = os.path.join(destination, link['href'].split('/')[-1])
         files.append(file_name)
+        # FIXME: Unsanitized input from data from a remote resource flows into open, where it is used as a path. 
+        # This may result in a Path Traversal vulnerability and allow an attacker to write arbitrary files.
         with open(file_name, 'wb') as f:
             response = requests.get(urljoin(url, link['href']), headers=HEADERS)
             f.write(response.content)
@@ -219,6 +223,7 @@ def parse_licensee_records(file_name):
     Returns:
         records (list(list)): A list of lists of values for each licensee.
     """
+    # FIXME: Logic is too complex :(
     records = []
     with fitz.open(file_name) as doc:
         for page in doc:
@@ -317,6 +322,7 @@ def get_sales_data_ok():
     # Read Oklahoma tax data.
     # Downloaded from:
     # https://oklahomastate.opengov.com/transparency#/33894/accountType=revenues&embed=n&breakdown=types&currentYearAmount=cumulative&currentYearPeriod=months&graph=bar&legendSort=desc&month=5&proration=false&saved_view=105742&selection=A49C34CEBF1D01A1738CB89828C9274D&projections=null&projectionType=null&highlighting=null&highlightingVariance=null&year=2021&selectedDataSetIndex=null&fiscal_start=earliest&fiscal_end=latest
+    # FIXME: This function is too complex :(
     date = datetime.now().isoformat()[:10]
     file_name = f'Oklahoma Data Snapshot {date}'
     ext = 'csv'
