@@ -1,28 +1,35 @@
 """
-Combine lab results, licensees, inventories, inventory types, and strains data.
-Cannabis Data Science Meetup Group
+Augment lab results with licensees, inventories, inventory types, and strains data.
 Copyright (c) 2022 Cannlytics
 
 Authors: Keegan Skeate <keegan@cannlytics.com>
 Created: 1/11/2022
-Updated: 1/19/2022
+Updated: 1/28/2022
 License: MIT License <https://opensource.org/licenses/MIT>
 
 Description: This script combines relevant fields from the licensees, inventories,
 inventory types, and strains datasets with the lab results data.
 
-Data Sources:
+Data sources:
 
     - WA State Traceability Data January 2018 - November 2021
     https://lcb.app.box.com/s/e89t59s0yb558tjoncjsid710oirqbgd?page=1
     https://lcb.app.box.com/s/e89t59s0yb558tjoncjsid710oirqbgd?page=2
 
-    - Leaf Data Systems Data Guide:
+Data Guide:
+
+    - Washington State Leaf Data Systems Guide
     https://lcb.wa.gov/sites/default/files/publications/Marijuana/traceability/WALeafDataSystems_UserManual_v1.37.5_AddendumC_LicenseeUser.pdf
+
+Data available at:
+
+    - https://cannlytics.com/data/market/augmented-washington-state-lab-results
+    - https://cannlytics.com/data/market/augmented-washington-state-licensees
 
 """
 # Standard imports.
 import gc
+import json
 
 # External imports.
 import pandas as pd
@@ -89,7 +96,7 @@ lab_results = read_lab_results(
 )
 
 # Save initial enhanced lab results.
-lab_results.to_csv('../.datasets/enhanced_lab_results.csv')
+lab_results.to_csv('../.datasets/augmented_lab_results.csv')
 
 # Define inventory fields.
 inventory_fields = {
@@ -176,8 +183,16 @@ gc.collect()
 # Combine lab result data with inventory type data.
 #------------------------------------------------------------------------------
 
+results_with_ids = pd.read_csv('../.datasets/lab_results_with_ids.csv')
+
+# Uncomment if you do not already have inventory_type_names.csv:
+
+# Get only the inventory names from the inventory types data.
+# from get_inventory_type_names import get_inventory_type_names
+# get_inventory_type_names()
+
 # Get only the results with
-results_with_ids = lab_results[~lab_results['inventory_type_id'].isna()]
+results_with_ids = results_with_ids[~results_with_ids['inventory_type_id'].isna()]
 
 # Read in inventory type names.
 inventory_type_names = pd.read_csv(
@@ -243,22 +258,8 @@ results_with_ids.drop(['global_id_y'], axis=1, inplace=True, errors='ignore')
 results_with_ids.to_csv('../.datasets/lab_results_with_strain_names.csv')
 
 #------------------------------------------------------------------------------
-# TODO: Combine lab result data with licensee data.
+# Combine lab result data with geocoded licensee data.
 #------------------------------------------------------------------------------
-
-# Get only the inventory names from the inventory types data.
-# from get_inventory_type_names import get_inventory_type_names
-# get_inventory_type_names()
-
-# Read lab result fields necessary to connect with inventory data.
-# lab_result_fields = {
-#     'global_id' : 'string',
-#     'mme_id': 'string'
-# }
-# lab_results = read_lab_results(
-#     columns=list(lab_result_fields.keys()),
-#     fields=lab_result_fields,
-# )
 
 # Add code variable to lab results with IDs.
 results_with_ids['code'] = results_with_ids['global_for_inventory_id'].map(
@@ -284,9 +285,10 @@ licensee_columns = list(licensee_fields.keys()) + licensee_date_fields
 
 # # Read in the licensee data.
 licensees = pd.read_csv(
-    '../.datasets/Licensees_0.csv',
-    sep='\t',
-    encoding='utf-16',
+    # '../.datasets/Licensees_0.csv',
+    '../.datasets/geocoded_licensee_data.csv',
+    # sep='\t',
+    # encoding='utf-16',
     usecols=licensee_columns,
     dtype=licensee_fields,
     parse_dates=licensee_date_fields,
@@ -315,6 +317,28 @@ results_with_ids.to_csv('../.datasets/lab_results_with_licensee_data.csv')
 
 
 #------------------------------------------------------------------------------
+# TODO: Combine lab result data with the labs' licensee data.
+#------------------------------------------------------------------------------
+
+# Read enhanced lab results.
+results_with_ids = pd.read_csv('../.datasets/lab_results_with_licensee_data.csv')
+
+# TODO: Combine each lab's licensee data.
+# lab_name
+# lab_address1
+# lab_address2
+# lab_ciy
+# lab_postal_code
+# lab_phone
+# lab_certificate_number
+# lab_global_id
+# lab_code
+# lab_created_at
+
+
+# TODO: Save the data enhanced with the lab's licensee data.
+
+#------------------------------------------------------------------------------
 # Combine lab result data with enhanced lab results data.
 #------------------------------------------------------------------------------
 
@@ -340,6 +364,9 @@ results_with_ids = pd.read_csv(
         'state_code': 'string',
         'postal_code': 'string',
         'license_type': 'string',
+        # TODO: Re-run with latitude and longitude
+        'latitude': 'float',
+        'longitude': 'float',
     },
 )
 
@@ -349,12 +376,8 @@ lab_result_fields = {
     'intermediate_type' : 'category',
     'status' : 'category',
     'cannabinoid_status' : 'category',
-    'cannabinoid_d9_thca_percent': 'float16',
-    'cannabinoid_d9_thca_mg_g' : 'float16',
-    'cannabinoid_d9_thc_percent' : 'float16',
-    'cannabinoid_d9_thc_mg_g' : 'float16',
-    'cannabinoid_d8_thc_percent' : 'float16',
-    'cannabinoid_d8_thc_mg_g' : 'float16',
+    'cannabinoid_cbc_percent' : 'float16',
+    'cannabinoid_cbc_mg_g' : 'float16',
     'cannabinoid_cbd_percent' : 'float16',
     'cannabinoid_cbd_mg_g' : 'float16',
     'cannabinoid_cbda_percent' : 'float16',
@@ -362,6 +385,18 @@ lab_result_fields = {
     'cannabinoid_cbdv_percent' : 'float16',
     'cannabinoid_cbg_percent' : 'float16',
     'cannabinoid_cbg_mg_g' : 'float16',
+    'cannabinoid_cbga_percent' : 'float16',
+    'cannabinoid_cbga_mg_g' : 'float16',
+    'cannabinoid_cbn_percent' : 'float16',
+    'cannabinoid_cbn_mg_g' : 'float16',
+    'cannabinoid_d8_thc_percent' : 'float16',
+    'cannabinoid_d8_thc_mg_g' : 'float16',
+    'cannabinoid_d9_thca_percent': 'float16',
+    'cannabinoid_d9_thca_mg_g' : 'float16',
+    'cannabinoid_d9_thc_percent' : 'float16',
+    'cannabinoid_d9_thc_mg_g' : 'float16',
+    'cannabinoid_thcv_percent' : 'float16',
+    'cannabinoid_thcv_mg_g' : 'float16',
     'solvent_status' : 'category',
     'solvent_acetone_ppm' : 'float16',
     'solvent_benzene_ppm' : 'float16',
@@ -416,7 +451,37 @@ results_with_ids = pd.merge(
     left_on='global_id',
     right_on='lab_result_id',
 )
-results_with_ids.drop(['global_id'], axis=1, inplace=True, errors='ignore')
+results_with_ids.rename(columns={'lab_id_x': 'lab_id'}, inplace=True)
+results_with_ids.drop([
+    'Unnamed: 0',
+    'Unnamed: 0.1',
+    'global_id',
+    'lab_id_y',
+], axis=1, inplace=True, errors='ignore')
 
-# Save the complete lab results data.
+# TODO: Fill missing cannabinoid percent or mg/g.
+
+# # Calculate total cannabinoids.
+# cannabinoids_wa = [
+#     'cannabinoid_d9_thca_percent',
+#     'cannabinoid_d9_thc_percent',
+#     'cannabinoid_d8_thc_percent',
+#     'cannabinoid_thcv_percent',
+#     'cannabinoid_cbd_percent',
+#     'cannabinoid_cbda_percent',
+#     'cannabinoid_cbdv_percent',
+#     'cannabinoid_cbg_percent',
+#     'cannabinoid_cbga_percent',
+#     'cannabinoid_cbc_percent',
+#     'cannabinoid_cbn_percent',
+# ]
+# results_with_ids['total_cannabinoids'] = results_with_ids[cannabinoids_wa].sum(axis=1)
+
+# Save the complete lab results data to csv, xlsx, and json.
+results_with_ids.to_excel('../.datasets/lab_results_complete.xlsx')
 results_with_ids.to_csv('../.datasets/lab_results_complete.csv')
+# FIXME: NAType is not JSON serializable
+# with open('../.datasets/lab_results_complete.json', 'w') as outfile:
+#     data = results_with_ids.where(pd.notnull(results_with_ids), '')
+#     data = json.loads(json.dumps(list(data.T.to_dict().values())))
+#     json.dump(data, outfile)

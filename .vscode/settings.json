@@ -2,7 +2,25 @@
   "editor.insertSpaces": true,
   "editor.tabSize": 2,
   "cSpell.words": [
-    "Quickstart"
+    "aflatoxins",
+    "cannabinoid",
+    "cannabinoids",
+    "cbda",
+    "cbdv",
+    "cbga",
+    "dichloromethane",
+    "dtype",
+    "GARCH",
+    "inplace",
+    "isin",
+    "isna",
+    "iterrows",
+    "ochratoxin",
+    "pentanes",
+    "pyplot",
+    "Quickstart",
+    "thca",
+    "thcv"
   ],
   "files.exclude": {
     "**/__pycache__": true,

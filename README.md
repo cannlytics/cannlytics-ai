@@ -109,7 +109,7 @@ Please see the [data collection guides](guides/data/data-collection.md) for info
 
 Now for the fun part, automation.
 
-> Note that you will need to [enable billing for your project](http://console.cloud.google.com/billing/?_ga=2.91797530.1059044588.1636848277-147951098.1631325967), [enable the Cloud Scheduler API](http://console.cloud.google.com/apis/library/cloudscheduler.googleapis.com?_ga=2.121230088.1059044588.1636848277-147951098.1631325967), and [enable the Pub/Sub API](http://console.cloud.google.com/apis/library/pubsub.googleapis.com?_ga=2.121230088.1059044588.1636848277-147951098.1631325967).
+> Note that you will need to [enable billing for your project](http://console.cloud.google.com/billing), [enable the Cloud Scheduler API](http://console.cloud.google.com/apis/library/cloudscheduler.googleapis.com), and [enable the Pub/Sub API](http://console.cloud.google.com/apis/library/pubsub.googleapis.com).
 
 1. Create a Pub/Sub topic:
 

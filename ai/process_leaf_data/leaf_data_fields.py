@@ -20,12 +20,8 @@ lab_result_fields = {
     'status' : 'category',
     'global_for_inventory_id': 'string',
     'cannabinoid_status' : 'category',
-    'cannabinoid_d9_thca_percent': 'float16',
-    'cannabinoid_d9_thca_mg_g' : 'float16',
-    'cannabinoid_d9_thc_percent' : 'float16',
-    'cannabinoid_d9_thc_mg_g' : 'float16',
-    'cannabinoid_d8_thc_percent' : 'float16',
-    'cannabinoid_d8_thc_mg_g' : 'float16',
+    'cannabinoid_cbc_percent' : 'float16',
+    'cannabinoid_cbc_mg_g' : 'float16',
     'cannabinoid_cbd_percent' : 'float16',
     'cannabinoid_cbd_mg_g' : 'float16',
     'cannabinoid_cbda_percent' : 'float16',
@@ -33,6 +29,18 @@ lab_result_fields = {
     'cannabinoid_cbdv_percent' : 'float16',
     'cannabinoid_cbg_percent' : 'float16',
     'cannabinoid_cbg_mg_g' : 'float16',
+    'cannabinoid_cbga_percent' : 'float16',
+    'cannabinoid_cbga_mg_g' : 'float16',
+    'cannabinoid_cbn_percent' : 'float16',
+    'cannabinoid_cbn_mg_g' : 'float16',
+    'cannabinoid_d8_thc_percent' : 'float16',
+    'cannabinoid_d8_thc_mg_g' : 'float16',
+    'cannabinoid_d9_thca_percent': 'float16',
+    'cannabinoid_d9_thca_mg_g' : 'float16',
+    'cannabinoid_d9_thc_percent' : 'float16',
+    'cannabinoid_d9_thc_mg_g' : 'float16',
+    'cannabinoid_thcv_percent' : 'float16',
+    'cannabinoid_thcv__mg_g' : 'float16',
     'solvent_status' : 'category',
     'solvent_acetone_ppm' : 'float16',
     'solvent_benzene_ppm' : 'float16',
@@ -188,3 +196,64 @@ strain_date_fields = [
     'updated_at',
     'deleted_at',
 ]
+
+
+#------------------------------------------------------------------------------
+# Sales Items fields.
+# TODO: Parse SalesItems_0, SalesItems_1, SalesItems_2, SalesItems_3
+#------------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------------
+# Sales fields.
+# TODO: Parse Sales_0, Sales_1, Sales_2
+#------------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------------
+# Batches fields.
+# TODO: Parse Batches_0
+#------------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------------
+# Taxes fields.
+# TODO: Parse Taxes_0
+#------------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------------
+# Areas fields.
+# TODO: Parse Areas_0
+#------------------------------------------------------------------------------
+
+
+
+#------------------------------------------------------------------------------
+# Inventory Transfer Items fields.
+# TODO: Parse InventoryTransferItems_0
+#------------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------------
+# Inventory Transfer Items fields.
+# TODO: Parse InventoryTransferItems_0
+#------------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------------
+# Inventory Transfers fields.
+# TODO: Parse InventoryTransfers_0
+#------------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------------
+# Disposals fields.
+# Optional: Parse Disposals_0
+#------------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------------
+# Inventory Adjustments fields.
+# Optional: Parse InventoryAdjustments_0, InventoryAdjustments_1, InventoryAdjustments_2
+#------------------------------------------------------------------------------
