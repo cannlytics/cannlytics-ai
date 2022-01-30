@@ -203,11 +203,57 @@ strain_date_fields = [
 # TODO: Parse SalesItems_0, SalesItems_1, SalesItems_2, SalesItems_3
 #------------------------------------------------------------------------------
 
+sales_items_fields = {
+    'global_id': 'string',
+    'global_mme_id': 'string',
+    'global_user_id': 'string',
+    'global_sale_id': 'string',
+    'global_batch_id': 'string',
+    'global_returned_by_user_id': 'string',
+    'global_inventory_id': 'string',
+    'external_id': 'string',
+    'qty': 'float16',
+    'uom': 'string',
+    'unit_price': 'float16',
+    'price_total': 'float16',
+    'returned_reason': 'string',
+    'total_marijuana_in_grams': 'float16',
+    'name': 'string',
+}
+sales_items_date_fields = [
+    'created_at',
+    'updated_at',
+    'sold_at',
+    'returned_at',
+    'use_by_date',
+    'deleted_at',
+]
+
 
 #------------------------------------------------------------------------------
 # Sales fields.
 # TODO: Parse Sales_0, Sales_1, Sales_2
 #------------------------------------------------------------------------------
+
+sales_fields = {
+    'external_id': 'string',
+    'patient_medical_id': 'string',
+    'type': 'string',
+    'price_total': 'float16',
+    'reason': 'string',
+    'status': 'string',
+    'global_id': 'string',
+    'caregiver_id': 'string',
+    'global_mme_id': 'string',
+    'global_user_id': 'string',
+    'global_sold_by_user_id': 'string',
+}
+sales_date_fields = [
+    'created_at',
+    'updated_at',
+    'sold_at',
+    'deleted_at',
+]
 
 
 #------------------------------------------------------------------------------
@@ -215,45 +261,262 @@ strain_date_fields = [
 # TODO: Parse Batches_0
 #------------------------------------------------------------------------------
 
+batches_fields = {
+    'external_id': 'string',
+    'num_plants': 'float16',
+    'status': 'string',
+    'qty_harvest': 'float16',
+    'uom': 'string',
+    'is_parent_batch': 'int',
+    'is_child_batch': 'int',
+    'type': 'string',
+    'harvest_stage': 'string',
+    'qty_accumulated_waste': 'float16',
+    'qty_packaged_flower': 'float16',
+    'qty_packaged_by_product': 'float16',
+    'origin': 'string',
+    'source': 'string',
+    'qty_cure': 'float',
+    'plant_stage': 'string',
+    'flower_dry_weight': 'float16',
+    'waste': 'float16',
+    'other_waste': 'float16',
+    'flower_waste': 'float16',
+    'other_dry_weight': 'float16',
+    'flower_wet_weight': 'float16',
+    'other_wet_weight': 'float16',
+    'global_id': 'string',
+    'global_area_id': 'string',
+    'area_name': 'string',
+    'global_mme_id': 'string',
+    'mme_name': 'string',
+    'mme_code': 'string',
+    'global_user_id': 'string',
+    'global_strain_id': 'string',
+    'strain_name': 'string',
+    'global_mother_plant_id': 'string',
+    'global_flower_area_id': 'string',
+    'global_other_area_id': 'string',
+}
+batches_date_fields = [
+    'created_at',
+    'updated_at',
+    'planted_at',
+    'harvested_at',
+    'batch_created_at',
+    'deleted_at',
+    'est_harvest_at',
+    'packaged_completed_at',
+    'harvested_end_at',
+]
+
 
 #------------------------------------------------------------------------------
 # Taxes fields.
 # TODO: Parse Taxes_0
 #------------------------------------------------------------------------------
 
+taxes_fields = {
+
+}
+taxes_date_fields = [
+
+]
 
 #------------------------------------------------------------------------------
 # Areas fields.
 # TODO: Parse Areas_0
 #------------------------------------------------------------------------------
 
-
+areas_fields = {
+    'external_id': 'string',
+    'name': 'string',
+    'type': 'string',
+    'is_quarantine_area': 'bool',
+    'global_id': 'string',
+}
+areas_date_fields = [
+    'created_at',
+    'updated_at',
+    'deleted_at',
+]
 
 #------------------------------------------------------------------------------
 # Inventory Transfer Items fields.
 # TODO: Parse InventoryTransferItems_0
 #------------------------------------------------------------------------------
 
-
-#------------------------------------------------------------------------------
-# Inventory Transfer Items fields.
-# TODO: Parse InventoryTransferItems_0
-#------------------------------------------------------------------------------
-
+inventory_transfer_items_fields = {
+    'external_id': 'string',
+    'is_sample': 'int',
+    'sample_type': 'string',
+    'product_sample_type': 'string',
+    'description': 'string',
+    'qty': 'float16',
+    'price': 'float16',
+    'uom': 'string',
+    'received_qty': 'float16',
+    'retest': 'int',
+    'global_id': 'string',
+    'is_for_extraction': 'int',
+    'propagation_source': 'string',
+    'inventory_name': 'string',
+    'intermediate_type': 'string',
+    'strain_name': 'string',
+    'global_mme_id': 'string',
+    'global_user_id': 'string',
+    'global_batch_id': 'string',
+    'global_plant_id': 'string',
+    'global_inventory_id': 'string',
+    'global_lab_result_id': 'string',
+    'global_received_area_id': 'string',
+    'global_received_strain_id': 'string',
+    'global_inventory_transfer_id': 'string',
+    'global_received_batch_id': 'string',
+    'global_received_inventory_id': 'string',
+    'global_received_plant_id': 'string',
+    'global_received_mme_id': 'string',
+    'global_received_mme_user_id': 'string',
+    'global_customer_id': 'string',
+    'global_inventory_type_id': 'string',
+    # Optional: Match with inventory type fields
+    # "created_at": "09/11/2018 07:39am",
+    # "updated_at": "09/12/2018 03:55am",
+    # "external_id": "123425",
+    # "name": "Charlotte's Web Pre-Packs - 3.5gm",
+    # "description": "",
+    # "storage_instructions": "",
+    # "ingredients": "",
+    # "type": "end_product",
+    # "allergens": "",
+    # "contains": "",
+    # "used_butane": 0,
+    # "net_weight": "2",
+    # "packed_qty": null,
+    # "cost": "0.00",
+    # "value": "0.00",
+    # "serving_num": 1,
+    # "serving_size": 0,
+    # "uom": "ea",
+    # "total_marijuana_in_grams": "0.000000",
+    # "total_marijuana_in_mcg": null,
+    # "deleted_at": null,
+    # "intermediate_type": "usable_marijuana",
+    # "global_id": "WAG12.TY3DE",
+    # "global_original_id": null,
+    # "weight_per_unit_in_grams": "0.00"
+    # "global_mme_id": "WASTATE1.MM30",
+    # "global_user_id": "WASTATE1.US1I",
+    # "global_strain_id": null
+}
+inventory_transfer_items_date_fields = [
+    'created_at',
+    'updated_at',
+    'received_at',
+    'deleted_at',
+]
 
 #------------------------------------------------------------------------------
 # Inventory Transfers fields.
 # TODO: Parse InventoryTransfers_0
 #------------------------------------------------------------------------------
 
+inventory_transfers_fields = {
+    'number_of_edits': 'int',
+    'external_id': 'string',
+    'void': 'int',
+    'multi_stop': 'int',
+    'route': 'string',
+    'stops': 'string',
+    'vehicle_description': 'string',
+    'vehicle_year': 'string',
+    'vehicle_color': 'string',
+    'vehicle_vin': 'string',
+    'vehicle_license_plate': 'string',
+    'notes': 'string',
+    'transfer_manifest': 'string',
+    'manifest_type': 'string',
+    'status': 'string',
+    'type': 'string',
+    'transfer_type': 'string',
+    'global_id': 'string',
+    'test_for_terpenes': 'int',
+    'transporter_name1': 'string',
+    'transporter_name2': 'string',
+    'global_mme_id': 'string',
+    'global_user_id': 'string',
+    'global_from_mme_id': 'string',
+    'global_to_mme_id': 'string',
+    'global_from_user_id': 'string',
+    'global_to_user_id': 'string',
+    'global_from_customer_id': 'string',
+    'global_to_customer_id': 'string',
+    'global_transporter_user_id': 'string',
+}
+inventory_transfers_date_fields = [
+    'created_at',
+    'updated_at',
+    'hold_starts_at',
+    'hold_ends_at',
+    'transferred_at',
+    'est_departed_at',
+    'est_arrival_at',
+    'deleted_at',
+]
 
 #------------------------------------------------------------------------------
 # Disposals fields.
 # Optional: Parse Disposals_0
 #------------------------------------------------------------------------------
 
+disposals_fields = {
+    'external_id': 'string',
+    'whole_plant': 'string',
+    'reason': 'string',
+    'method': 'string',
+    'phase': 'string',
+    'type': 'string',
+    'qty': 'float16',
+    'uom': 'string',
+    'source': 'string',
+    'disposal_cert': 'string',
+    'global_id': 'string',
+    'global_mme_id': 'string',
+    'global_user_id': 'string',
+    'global_batch_id': 'string',
+    'global_area_id': 'string',
+    'global_plant_id': 'string',
+    'global_inventory_id': 'string',
+}
+disposals_date_fields = [
+    'created_at',
+    'updated_at',
+    'hold_starts_at',
+    'hold_ends_at',
+    'disposal_at',
+    'deleted_at',
+]
 
 #------------------------------------------------------------------------------
 # Inventory Adjustments fields.
 # Optional: Parse InventoryAdjustments_0, InventoryAdjustments_1, InventoryAdjustments_2
 #------------------------------------------------------------------------------
+
+inventory_adjustments_fields = {
+    'external_id': 'string',
+    'qty': 'float16',
+    'uom': 'string',
+    'reason': 'string',
+    'memo': 'string',
+    'global_id': 'string',
+    'global_mme_id': 'string',
+    'global_user_id': 'string',
+    'global_inventory_id': 'string',
+    'global_adjusted_by_user_id': 'string',
+}
+inventory_adjustments_date_fields = [
+    'created_at',
+    'updated_at',
+    'adjusted_at',
+    'deleted_at',
+]
