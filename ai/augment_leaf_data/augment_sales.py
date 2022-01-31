@@ -76,6 +76,65 @@ def read_sales(
     # data = data.loc[data.lab_id != '']
     # return data
 
+#------------------------------------------------------------------------------
+# Augment sales data with licensee data.
+#------------------------------------------------------------------------------
+
+# Merge licensee_id to mme_id,.
+
+
+#------------------------------------------------------------------------------
+# Augment sales data with sales items data.
+# Merge sales_id to sale_id.
+#------------------------------------------------------------------------------
+
+sales = pd.read_csv('../.datasets/augmented_sales.csv')
+sales_items_fields = {
+    'global_id': 'string',
+    'name': 'string',
+}
+sales_items_columns = list(sales_items_fields.keys())
+sales_items = pd.read_csv(
+    '../.datasets/sales_items.csv',
+    sep='\t',
+    encoding='utf-16',
+    dtype=sales_items_fields,
+    usecols=sales_items_columns,
+)
+sales_items.rename(columns={
+    'global_id': 'sales_items_id',
+    'name': 'sales_items_name',
+}, inplace=True)
+results_with_ids = pd.merge(
+    left=sales,
+    right=sales_items,
+    how='left',
+    left_on='sales_id',
+    right_on='sales_id',
+)
+results_with_ids.rename(columns={'global_id_x': 'global_id'}, inplace=True)
+results_with_ids.drop(['global_id_y'], axis=1, inplace=True, errors='ignore')
+results_with_ids.to_csv('../.datasets/augmented_sales.csv')
+
+#------------------------------------------------------------------------------
+# Augment sales data with inventories data.
+#------------------------------------------------------------------------------
+
+# Merge inventory_id to inventory_id,.
+
+#------------------------------------------------------------------------------
+# Augment sales data with inventory type data.
+#------------------------------------------------------------------------------
+
+# Merge inventory_type_id to inventory_type_id,.
+
+
+#------------------------------------------------------------------------------
+# Augment sales data with lab results data.
+#------------------------------------------------------------------------------
+
+# Merge lab_result_id to lab_result_id.
+
 
 #------------------------------------------------------------------------------
 # Calculate sales statistics.
@@ -86,3 +145,28 @@ def read_sales(
 
 # Calculate total sales by day.
 # - Is there a day of the week effect?
+
+# What is the total amount of cannabinoids consumed in Washington Sate over time?
+# In mg/g, assuming dumptrucks of 100% cannabinoid concentrate, then how many
+# dumptrucks a year are Washingtonians consuming?
+
+
+# Answer the age old questions, does THC matter?
+# If so, then how much?
+
+# My hypothesis is that there is a direct linear relationship between THC
+# concentration demanded by people and its price.
+
+# Y-Axis Avg. price per mg/g of THC (of goods with THC)
+# X-Axis g of THC produced
+
+# Similarly
+# Y-Axis Ag price per mg/g of CBD (of goods with CBD)
+# X-Axis g of CBD produced
+
+# Estimate an inverse demand function
+# price_thc = y_0 + b_0 quantity_thc + u_t
+
+
+# Estimate a regression of price on total_cannabinoids ***
+

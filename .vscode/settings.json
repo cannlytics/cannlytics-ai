@@ -20,7 +20,8 @@
     "pyplot",
     "Quickstart",
     "thca",
-    "thcv"
+    "thcv",
+    "tseries"
   ],
   "files.exclude": {
     "**/__pycache__": true,
