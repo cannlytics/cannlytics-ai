@@ -147,7 +147,7 @@ EXCLUDE = [
     'COUNTY',
 ]
 
-EXLUDE_PARTS = [
+EXCLUDE_PARTS = [
     'Page ',
     'Licensed ',
     'LIST OF ',
@@ -195,19 +195,17 @@ def download_website_pdfs(url, destination):
     """Download all PDFs from a given website to a given folder.
     Args:
         url (str): The website that contains the PDFs.
-        destination (str): The destination for the PDFS.
+        destination (str): The destination for the PDFs.
     Returns:
         files (list): A list of where all PDFs were downloaded.
     """
     files = []
     if not os.path.exists(destination): os.mkdir(destination)
     response = requests.get(url)
-    soup= BeautifulSoup(response.text, 'html.parser')     
+    soup = BeautifulSoup(response.text, 'html.parser')     
     for link in soup.select('a[href$=".pdf"]'):
         file_name = os.path.join(destination, link['href'].split('/')[-1])
         files.append(file_name)
-        # FIXME: Unsanitized input from data from a remote resource flows into open, where it is used as a path. 
-        # This may result in a Path Traversal vulnerability and allow an attacker to write arbitrary files.
         with open(file_name, 'wb') as f:
             response = requests.get(urljoin(url, link['href']), headers=HEADERS)
             f.write(response.content)
@@ -219,11 +217,10 @@ def parse_licensee_records(file_name):
     """Parse OMMA licensee records from a given licensee list.
     Args:
         url (str): The website that contains the PDFs.
-        destination (str): The destination for the PDFS.
+        destination (str): The destination for the PDFs.
     Returns:
         records (list(list)): A list of lists of values for each licensee.
     """
-    # FIXME: Logic is too complex :(
     records = []
     with fitz.open(file_name) as doc:
         for page in doc:
@@ -231,7 +228,7 @@ def parse_licensee_records(file_name):
             values = page_text.replace(' \n \n', ' \n').split(' \n')
             row = []
             for value in values:
-                if value in EXCLUDE or any(x in value for x in EXLUDE_PARTS):
+                if value in EXCLUDE or any(x in value for x in EXCLUDE_PARTS):
                     continue
                 row.append(value.title())
                 if len(row) == 8:

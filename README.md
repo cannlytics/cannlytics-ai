@@ -5,9 +5,7 @@
   </div>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
-[![Coverage Status](https://coveralls.io/repos/github/cannlytics/cannlytics-ai/badge.svg?branch=main)](https://coveralls.io/github/cannlytics/cannlytics-ai?branch=main)
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dwyl/esta/issues)
-[![Maintainability](https://api.codeclimate.com/v1/badges/26b6ae8411a22b373639/maintainability)](https://codeclimate.com/github/cannlytics/cannlytics-ai/maintainability)
 
 <https://cannlytics.com/ai>
 

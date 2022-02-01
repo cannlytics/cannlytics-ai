@@ -26,15 +26,36 @@ Data available at:
     - https://cannlytics.com/data/market/augmented-washington-state-sales
 """
 
+#------------------------------------------------------------------------------
+# Read inventory transfer data.
+#------------------------------------------------------------------------------
 
-# TODO: Read in all of the inventory transfers.
-# - Calculate travel time and distance of planned route.
+# TODO: Read in the transfers.
+
+file_name = 'InventoryTransfers_0.csv'
+
+# TODO: Match the transfers with their items.
+
+file_name = 'InventoryTransferItems_0.csv'
 
 
-# Create contrail map of all transfers.
+#------------------------------------------------------------------------------
+# TODO: Augment transfer data with licensee data.
+#------------------------------------------------------------------------------
 
-# Calculate daily miles travelled (and time travelled).
 
-# Calculate monthly and yearly miles travelled (and time travelled).
+#------------------------------------------------------------------------------
+# TODO: Analysis of inventory transfers.
+#------------------------------------------------------------------------------
+
+# Data Points: Calculate travel time and distance of planned route.
+
+# Figure: Create contrail map of all transfers.
+
+# Figure: Create contrail map of each specific type of transfer.
+
+# Figure: Calculate daily miles travelled (and time travelled).
+
+# Statistic: Calculate monthly and yearly miles travelled (and time travelled).
 
 
