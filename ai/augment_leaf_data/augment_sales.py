@@ -1,11 +1,10 @@
 """
-Augment sales data with lab results, licensees, inventories, inventory types, 
-and strains data.
+Augment Washington State Leaf Traceability Sales Data
 Copyright (c) 2022 Cannlytics
 
 Authors: Keegan Skeate <keegan@cannlytics.com>
 Created: 1/29/2022
-Updated: 1/30/2022
+Updated: 2/4/2022
 License: MIT License <https://opensource.org/licenses/MIT>
 
 Description: This script calculates various statistics from the sales data using
@@ -30,6 +29,7 @@ Data available at:
 # Standard imports.
 import gc
 import json
+from typing import Any, Optional
 
 # External imports.
 import pandas as pd
@@ -38,346 +38,380 @@ import pandas as pd
 from utils import get_number_of_lines
 
 
-def read_sales(
-        columns=None,
-        fields=None,
-        date_columns=None,
-        nrows=None,
-        data_dir='../.datasets',
-):
+# def read_sales(
+#         columns=None,
+#         fields=None,
+#         date_columns=None,
+#         nrows=None,
+#         data_dir='../.datasets',
+# ):
+#     """
+#     1. Read Leaf lab results.
+#     2. Sort the data, removing null observations.
+#     3. Define a lab ID for each observation and remove attested lab results.
+#     """
+#     raise NotImplementedError
+#     # shards = []
+#     # lab_datasets = ['LabResults_0', 'LabResults_1', 'LabResults_2']
+#     # for dataset in lab_datasets:
+#     #     lab_data = pd.read_csv(
+#     #         f'{data_dir}/{dataset}.csv',
+#     #         sep='\t',
+#     #         encoding='utf-16',
+#     #         usecols=columns,
+#     #         dtype=fields,
+#     #         parse_dates=date_columns,
+#     #         nrows=nrows,
+#     #     )
+#     #     shards.append(lab_data)
+#     #     del lab_data
+#     #     gc.collect()
+#     # data = pd.concat(shards)
+#     # del shards
+#     # gc.collect()
+#     # data.dropna(subset=['global_id'], inplace=True)
+#     # # data.set_index('global_id', inplace=True)
+#     # data.sort_index(inplace=True)
+#     # data['lab_id'] = data['global_id'].map(lambda x: x[x.find('WAL'):x.find('.')])
+#     # data = data.loc[data.lab_id != '']
+#     # return data
+
+
+def augment_dataset(
+        data: Any,
+        data_file: str,
+        fields: dict,
+        merge_key: str,
+        match_key: Optional[str] = 'global_id',
+        chunk_size: Optional[int] = 1_000_000,
+        row_count: Optional[int] = None,
+        sep: Optional[str] = '\t',
+        encoding: Optional[str] = 'utf-16',
+        date_columns: Optional[list] = [],
+) -> Any:
+    """Augment a given dataset with another dataset from its datafile, by
+    follwing these steps:
+        1. Read in a chunk of the augmenting dataset and iterate until all of
+            its rows are read;
+        2. Merge the chunk of augmenting data with the data to be augmented;
+        3. Keep the augmented data.
+    Args:
+        data (DataFrame): The data to be augmented.
+        data_file (str): The file name of the dataset used for augmenting.
+        fields (dict): A dictionary of fields to merge from the augmenting dataset.
+        merge_key (str): The field in the data being augmented to merge on.
+        match_key (str): The field in the augmenting data to merge on,
+            `global_id` by default (optional).
+        chunk_size (int): The number of rows to read in the augmenting dataset
+            at 1 time (optional).
+        row_count (int): The number of rows in the augmenting datafile (optional).
+        sep (str): The type of separation in the augmenting datafile (optional).
+        encoding (str): The type of encoding of the augmenting datafile (optional).
+        date_columns (list): A list of date columns in the augmenting datafile (optional).
+    Returns:
     """
-    1. Read Leaf lab results.
-    2. Sort the data, removing null observations.
-    3. Define a lab ID for each observation and remove attested lab results.
-    """
-    raise NotImplementedError
-    # shards = []
-    # lab_datasets = ['LabResults_0', 'LabResults_1', 'LabResults_2']
-    # for dataset in lab_datasets:
-    #     lab_data = pd.read_csv(
-    #         f'{data_dir}/{dataset}.csv',
-    #         sep='\t',
-    #         encoding='utf-16',
-    #         usecols=columns,
-    #         dtype=fields,
-    #         parse_dates=date_columns,
-    #         nrows=nrows,
-    #     )
-    #     shards.append(lab_data)
-    #     del lab_data
-    #     gc.collect()
-    # data = pd.concat(shards)
-    # del shards
-    # gc.collect()
-    # data.dropna(subset=['global_id'], inplace=True)
-    # # data.set_index('global_id', inplace=True)
-    # data.sort_index(inplace=True)
-    # data['lab_id'] = data['global_id'].map(lambda x: x[x.find('WAL'):x.find('.')])
-    # data = data.loc[data.lab_id != '']
-    # return data
+    read_rows = 0
+    skiprows = None
+    columns = list(fields.keys()) + date_columns
+    if row_count is None:
+        row_count = get_number_of_lines(data_file)
+    while read_rows < row_count:
+        if read_rows:
+            skiprows = [i for i in range(1, read_rows)]
+        shard = pd.read_csv(
+            data_file,
+            sep=sep,
+            encoding=encoding,
+            usecols=columns,
+            dtype=fields,
+            skiprows=skiprows,
+            nrows=chunk_size,
+            parse_dates=date_columns,
+        )
+        match_columns = {}
+        match_columns[match_key] = merge_key
+        shard.rename(
+            columns=match_columns,
+            inplace=True,
+        )
+        data = pd.merge(
+            left=data,
+            right=shard,
+            how='left',
+            left_on=merge_key,
+            right_on=merge_key,
+        )
+        read_rows += chunk_size
+        print('Augmented %i observations.' % read_rows)
+    return data
+
 
 #------------------------------------------------------------------------------
 # Read sales data.
 #------------------------------------------------------------------------------
 
-sales_datasets = ['Sales_0.csv', 'Sales_1.csv', 'Sales_2.csv']
-sale_items_datasets = ['SaleItems_0.csv', 'SaleItems_1.csv', 'SaleItems_2.csv', 'SaleItems_3.csv']
-
-# Read sales observations.
-sales_fields = {
-    'global_id': 'string',
-    'external_id': 'string',
-    'type': 'string', # wholesale or retail_recrational
-    'price_total': 'float',
-    'status': 'string',
-    'mme_id': 'string',
-    'user_id': 'string',
-    'area_id': 'string',
-    'sold_by_user_id': 'string',
-}
-sales_date_fields = [
-    'created_at',
-    'updated_at',
-    'sold_at',
-    'deleted_at',
-]
-sales = pd.read_csv(
-    f'D:/leaf-data/Sales_0.csv',
-    sep='\t',
-    encoding='utf-16',
-    usecols=list(sales_fields.keys()) + sales_date_fields,
-    dtype=sales_fields,
-    parse_dates=sales_date_fields,
-    nrows=1000,
-)
-
-# Read sales items.
+# Specify the sales items needed.
 sales_items_fields = {
-    'global_id': 'string',
     'mme_id': 'string',
-    'user_id': 'string',
-    'sale_id': 'string',
-    'batch_id': 'string',
     'inventory_id': 'string',
-    'external_id': 'string',
     'qty': 'float',
     'uom': 'string',
-    'unit_price': 'float',
     'price_total': 'float',
     'name': 'string',
 }
 sales_items_date_fields = [
     'created_at',
-    'updated_at',
-    'sold_at',
-    'use_by_date',
 ]
-sale_items = pd.read_csv(
-    'D:/leaf-data/SaleItems_0.csv',
-    sep='\t',
-    encoding='utf-16',
-    usecols=list(sales_items_fields.keys()) + sales_items_date_fields,
-    dtype=sales_items_fields,
-    parse_dates=sales_items_date_fields,
-    nrows=1000,
-)
+
+# Specify the time range to calculate statistics.
+time_range = pd.date_range(start='2021-02-01', end='2021-11-30')
+
+# Specify the series to be collected.
+augmented_sales_items = []
+daily_total_sales = {}
+total_sales_by_retailer = {}
+
+# Iterate over all of the sales items.
+chunk_size = 10_000_001
+sale_items_datasets = [
+    {'file_name': 'D:/leaf-data/SaleItems_0.csv', 'rows': 90_000_001},
+    # {'file_name': 'D:/leaf-data/SaleItems_1.csv', 'rows': 90_000_001},
+    # {'file_name': 'D:/leaf-data/SaleItems_2.csv', 'rows': 90_000_001},
+    # {'file_name': 'D:/leaf-data/SaleItems_3.csv', 'rows': 76_844_111},
+]
+for dataset in sale_items_datasets:
+
+    skip_rows = None
+    rows_read = 0
+    number_of_rows = dataset['rows']
+    file_name = dataset['file_name']
+    while rows_read < number_of_rows:
+
+        # Define the chunk size.
+        if rows_read > 0:
+            skip_rows = [i for i in range(1, rows_read)]
+
+        # Read in the chunk of sales.
+        sale_items = pd.read_csv(
+            file_name,
+            sep='\t',
+            encoding='utf-16',
+            usecols=list(sales_items_fields.keys()) + sales_items_date_fields,
+            dtype=sales_items_fields,
+            parse_dates=sales_items_date_fields,
+            nrows=chunk_size,
+            skiprows=skip_rows,
+        )
+        sale_items.rename(
+            columns={'name': 'product_name'},
+            inplace=True,
+        )
+
+        # Merge sale_items inventory_id to inventories inventory_id.
+        sale_items= augment_dataset(
+            sale_items,
+            data_file='D:/leaf-data/Inventories_0.csv',
+            fields={
+                'global_id': 'string',
+                'strain_id': 'string',
+                'inventory_type_id': 'string',
+                'lab_result_id': 'string',
+            },
+            merge_key='inventory_id',
+            chunk_size=10_000_000,
+            row_count=129_920_072,
+        )
+
+        # Get inventory type (global_id) with inventory_type_id to get
+        # name and intermediate_type.
+        sale_items= augment_dataset(
+            sale_items,
+            data_file='D:/leaf-data/InventoryTypes_0.csv',
+            fields={
+                'global_id': 'string',
+                'name': 'string',
+                'intermediate_type': 'string',
+            },
+            merge_key='inventory_type_id',
+            chunk_size=10_000_000,
+            row_count=57_016_229,
+        )
+        sale_items.rename(
+            columns={'name': 'inventory_type_name'},
+            inplace=True,
+        )
+
+        # FIXME: Make this into a function.
+        # Match with augmented lab results to get total_cannabinoids.
+        # lab_result_fields = {
+        #     'lab_result_id': 'string',
+        #     'total_cannabinoids': 'float',
+        # }
+        # lab_results = pd.read_csv(
+        #     'D:/leaf-data/augmented/augmented-washington-state-lab-results.csv',
+        #     usecols=list(lab_result_fields.keys()),
+        #     dtype=lab_result_fields,
+        #     # nrows=1000,
+        # )
+        # sale_items = pd.merge(
+        #     left=sale_items,
+        #     right=lab_results,
+        #     how='left',
+        #     left_on='lab_result_id',
+        #     right_on='lab_result_id',
+        # )
+
+        # Optional: Lookup inventory_type_id with strain_id if the
+        # inventory type is not yet identified.
+        
+        # TODO: Calculate time between tested and sold (shelf-life).
+
+        # TODO: Keep track of that intermediate_type sales.
+
+        # TODO: Keep track of total_cannabinoids, lab_result_id, and total_price.
+
+        # TODO: Iterate over the time range.
+        for date in time_range:
+
+            day = date.date()
+
+            # Get the day's sales.
+            day_sales = sale_items.loc[
+                sale_items['created_at'] == date
+            ]
+
+            #  Add price_total to the daily total sales.
+            existing_sales = daily_total_sales.get(day, {'total': 0})
+            total_sales = day_sales['price_total'].sum()
+            daily_total_sales[day] = {'total': existing_sales + total_sales}
+
+            # TODO: Add price_total to daily sales by type.
+
+            # TODO: Add price_total to daily sales by retailer.
+
+            # Optional: Keep track of number of items sold.
+
+            # Optional: Keep track of the quantity sold.
+
+            # TODO: Keep track of average daily price by type.
+
+            # TODO: If contains THC, Keep track of average price per mg of THC.
+
+            # TODO: If contains CBD, Keep track of average price per mg of CBD.
+        
+            # Optional: Keep track of shelf-life (time from testing to sale).
+
+        # TODO: Save augmented sale items.
+
+    # Keep track of the sale items read.
+    rows_read += chunk_size
+    print('Processed', rows_read, 'sales items')
+
+
+# TODO: Save the daily total sales series.
+# daily_plant_data = pd.DataFrame(daily_plant_count)
+# daily_plant_data.columns = ['date', 'total_plants', 'total_cultivators']
+# daily_plant_data.to_csv('D:/leaf-data/augmented/daily_plant_data_2020c.csv')
+
+# TODO: Save the daily sales by licensee.
+# panel_plant_data = pd.DataFrame(plant_panel)
+# panel_plant_data.to_csv('D:/leaf-data/augmented/daily_licensee_plant_data_2020c.csv')
 
 
 #------------------------------------------------------------------------------
-# Augment sales data with licensee data.
+# TODO: Augment sales data with licensee data.
 #------------------------------------------------------------------------------
 
-# Merge licensee_id to mme_id,.
+# Merge mme_id to mme_id to get information about the retailer:
+# - latitude, longitude, name.
 
+# # Add code variable to lab results with IDs.
+# results_with_ids['code'] = results_with_ids['global_for_inventory_id'].map(
+#     lambda x: x[x.find('WA'):x.find('.')]
+# ).str.replace('WA', '')
 
-#------------------------------------------------------------------------------
-# Augment sales data with sales items data.
-# Merge sales_items sale_id to sales global_id.
-#------------------------------------------------------------------------------
-
-# sales = pd.read_csv('../.datasets/augmented_sales.csv')
-# sales_items_fields = {
-#     'global_id': 'string',
+# # Specify the licensee fields.
+# licensee_fields = {
+#     'global_id' : 'string',
+#     'code': 'string',
 #     'name': 'string',
+#     'type': 'string',
+#     'address1': 'string',
+#     'address2': 'string',
+#     'city': 'string',
+#     'state_code': 'string',
+#     'postal_code': 'string',
 # }
-# sales_items_columns = list(sales_items_fields.keys())
-# sales_items = pd.read_csv(
-#     '../.datasets/sales_items.csv',
-#     sep='\t',
-#     encoding='utf-16',
-#     dtype=sales_items_fields,
-#     usecols=sales_items_columns,
+# licensee_date_fields = [
+#     'created_at', # No records if issued before 2018-02-21.
+# ]
+# licensee_columns = list(licensee_fields.keys()) + licensee_date_fields
+
+# # # Read in the licensee data.
+# licensees = pd.read_csv(
+#     # '../.datasets/Licensees_0.csv',
+#     '../.datasets/geocoded_licensee_data.csv',
+#     # sep='\t',
+#     # encoding='utf-16',
+#     usecols=licensee_columns,
+#     dtype=licensee_fields,
+#     parse_dates=licensee_date_fields,
 # )
-# sales_items.rename(columns={
-#     'global_id': 'sales_items_id',
-#     'name': 'sales_items_name',
+
+# # Format the licensees data.
+# licensees.rename(columns={
+#     'global_id': 'mme_id',
+#     'created_at': 'license_created_at',
+#     'type': 'license_type',
 # }, inplace=True)
+
+# # Combine the data sets.
 # results_with_ids = pd.merge(
-#     left=sales,
-#     right=sales_items,
+#     left=results_with_ids,
+#     right=licensees,
 #     how='left',
-#     left_on='sales_id',
-#     right_on='sales_id',
+#     left_on='code',
+#     right_on='code'
 # )
 # results_with_ids.rename(columns={'global_id_x': 'global_id'}, inplace=True)
 # results_with_ids.drop(['global_id_y'], axis=1, inplace=True, errors='ignore')
-# results_with_ids.to_csv('../.datasets/augmented_sales.csv')
 
-
-#------------------------------------------------------------------------------
-# Augment sales data with inventories data.
-#------------------------------------------------------------------------------
-
-# Merge inventory_id to inventory_id,.
-
-# inventories = pd.read_csv(
-#     'D:/leaf-data/Inventories_0.csv',
-#     sep='\t',
-#     encoding='utf-16',
-#     # usecols=list(sales_items_fields.keys()) + sales_items_date_fields,
-#     # dtype=sales_items_fields,
-#     # parse_dates=sales_items_date_fields,
-#     nrows=1000,
-# )
-
-
-#------------------------------------------------------------------------------
-# Augment sales data with inventory type data.
-#------------------------------------------------------------------------------
-
-# Merge inventory_type_id to inventory_type_id,.
-
-
-#------------------------------------------------------------------------------
-# Augment sales data with lab results data.
-#------------------------------------------------------------------------------
-
-# Merge lab_result_id to lab_result_id.
+# # Save lab results enhanced with additional fields.
+# results_with_ids.to_csv('../.datasets/lab_results_with_licensee_data.csv')
 
 
 #------------------------------------------------------------------------------
 # Calculate sales statistics.
 #------------------------------------------------------------------------------
-datatypes = {
-    'lab_result_id': 'string',
-    'intermediate_type': 'category',
-    'status': 'category',
-    'global_for_inventory_id': 'string',
-    'inventory_type_id': 'string',
-    'lab_id': 'string',
-    'strain_id': 'string',
-    'inventory_name': 'string',
-    'strain_name': 'string',
-    'code': 'string',
-    'mme_id': 'string',
-    'license_created_at': 'string',
-    'name': 'string',
-    'address1': 'string',
-    'address2': 'string',
-    'city': 'string',
-    'state_code': 'string',
-    'postal_code': 'string',
-    'license_type': 'string',
-    'cannabinoid_status': 'category',
-    'cannabinoid_cbc_percent': 'float16',
-    'cannabinoid_cbc_mg_g': 'float16',
-    'cannabinoid_cbd_percent': 'float16',
-    'cannabinoid_cbd_mg_g': 'float16',
-    'cannabinoid_cbda_percent': 'float16',
-    'cannabinoid_cbda_mg_g': 'float16',
-    'cannabinoid_cbdv_percent': 'float16',
-    'cannabinoid_cbg_percent': 'float16',
-    'cannabinoid_cbg_mg_g': 'float16',
-    'cannabinoid_cbga_percent': 'float16',
-    'cannabinoid_cbga_mg_g': 'float16',
-    'cannabinoid_cbn_percent': 'float16',
-    'cannabinoid_cbn_mg_g': 'float16',
-    'cannabinoid_d8_thc_percent': 'float16',
-    'cannabinoid_d8_thc_mg_g': 'float16',
-    'cannabinoid_d9_thca_percent': 'float16',
-    'cannabinoid_d9_thca_mg_g': 'float16',
-    'cannabinoid_d9_thc_percent': 'float16',
-    'cannabinoid_d9_thc_mg_g': 'float16',
-    'cannabinoid_thcv_percent': 'float16',
-    'cannabinoid_thcv_mg_g': 'float16',
-    # 'solvent_status': 'category',
-    # 'solvent_acetone_ppm': 'float16',
-    # 'solvent_benzene_ppm': 'float16',
-    # 'solvent_butanes_ppm': 'float16',
-    # 'solvent_chloroform_ppm': 'float16',
-    # 'solvent_cyclohexane_ppm': 'float16',
-    # 'solvent_dichloromethane_ppm': 'float16',
-    # 'solvent_ethyl_acetate_ppm': 'float16',
-    # 'solvent_heptane_ppm': 'float16',
-    # 'solvent_hexanes_ppm': 'float16',
-    # 'solvent_isopropanol_ppm': 'float16',
-    # 'solvent_methanol_ppm': 'float16',
-    # 'solvent_pentanes_ppm': 'float16',
-    # 'solvent_propane_ppm': 'float16',
-    # 'solvent_toluene_ppm': 'float16',
-    # 'solvent_xylene_ppm': 'float16',
-    # 'foreign_matter': 'bool',
-    # 'foreign_matter_stems': 'float16',
-    # 'foreign_matter_seeds': 'float16',
-    # 'microbial_status': 'category',
-    # 'microbial_bile_tolerant_cfu_g': 'float16',
-    # 'microbial_pathogenic_e_coli_cfu_g': 'float16',
-    # 'microbial_salmonella_cfu_g': 'float16',
-    # 'moisture_content_percent': 'float16',
-    # 'moisture_content_water_activity_rate': 'float16',
-    # 'mycotoxin_status': 'category',
-    # 'mycotoxin_aflatoxins_ppb': 'float16',
-    # 'mycotoxin_ochratoxin_ppb': 'float16',
-    # 'thc_percent': 'float16',
-    # 'notes': 'float32',
-    # 'testing_status': 'category',
-    # 'type': 'category',
-    # 'external_id': 'string',
-}
-date_columns = ['created_at']
-columns = list(datatypes.keys()) + date_columns
-results = pd.read_csv(
-    'D:/leaf-data/lab_results_complete.csv',
-    index_col='lab_result_id',
-    dtype=datatypes,
-    usecols=columns,
-    parse_dates=date_columns,
-)
-
-# TODO: Calculate total cannabinoids.
-
-
-# inventories_size = get_number_of_lines('D:/leaf-data/Inventories_0.csv')
-inventories_size = 64_960_036
-
-# TODO: Iterate over sales items.
-daily_data = {}
-for index, row in sale_items.iterrows():
-
-    # For each sale item at the price_total to the day's total_sales
-    # using the created_at timestamp.
-
-    # TODO: Match with inventories,
-    # reading in inventories chunk by chunk until matched.
-    inventory_data = None
-    while not inventories or row <= inventories_size 
-        inventories = pd.read_csv(
-            'D:/leaf-data/Inventories_0.csv',
-            sep='\t',
-            encoding='utf-16',
-            # usecols=list(sales_items_fields.keys()) + sales_items_date_fields,
-            # dtype=sales_items_fields,
-            # parse_dates=sales_items_date_fields,
-            nrows=1000,
-        )
-
-    # Get lab_result_id
-
-    # Lookup the augmented lab_result_id by lab_result_id
-    lab_result = results.loc[
-        results['global_for_inventory_id'] == row['inventory_id']
-    ]
-
-    # TODO: Lookup inventory_type_id, strain_id if the
-    # inventory type is not yet identified.
-
-    date = row['created_at'][:10]
-    day_data = daily_data.get(date, {
-        'total_sales': 0,
-        'observations': 0,
-        'shelf_lives': []
-    })
-    day_data['total_sales'] += row['price_total']
-    day_data['observations'] += 1
-    # TODO: Calculate time between tested and sold (shelf-life).
-
-    # TODO: Keep track of that intermediate_type sales
-
-    # TODO: Keep track of total_cannabinoids, lab_result_id, and total_price
-
-
 
 # TODO: Aggregate total_transaction, total_revenue, and average_price
 # for each lab result.
 
-# Calculate total sales by day.
-# - Is there a day of the week effect?
+# Using total sales by day, estimate if there is a day of the week effect?
+# Null hypothesis: There is no statistical difference in sales depending on the day of the week.
+# Alternative hypothesis: There is a statistical difference in sales depending on the day of the week.
+
 
 # What is the total amount of cannabinoids consumed in Washington Sate over time?
+
+
 # In mg/g, assuming dumptrucks of 100% cannabinoid concentrate, then how many
 # dumptrucks a year are Washingtonians consuming?
 
 
-# Answer the age old questions, does THC matter?
-# If so, then how much?
-
+# Answer the age old questions, does THC matter? If so, then how much?
 # My hypothesis is that there is a direct linear relationship between THC
 # concentration demanded by people and its price.
 
+# Run a regression of total sales for a given lab result and it's total cannabinoids.
+
+
+# Plot the regression of sales on THC.
 # Y-Axis Avg. price per mg/g of THC (of goods with THC)
 # X-Axis g of THC produced
 
-# Similarly
+
+# Similarly, plot the regression of sales on CBD
 # Y-Axis Ag price per mg/g of CBD (of goods with CBD)
 # X-Axis g of CBD produced
 
@@ -389,101 +423,8 @@ for index, row in sale_items.iterrows():
 
 
 #------------------------------------------------------------------------------
-# Get fields of interest from a large dataset.
+# TODO: Visualize sales data.
 #------------------------------------------------------------------------------
 
-# # Define necessary lab result fields.
-# lab_result_fields = {
-#     'global_id' : 'string',
-#     'global_for_inventory_id': 'string'
-# }
-
-# # Read lab result fields necessary to connect with inventory data.
-# lab_results = read_lab_results(
-#     columns=list(lab_result_fields.keys()),
-#     fields=lab_result_fields,
-# )
-
-# # Save initial enhanced lab results.
-# lab_results.to_csv('../.datasets/augmented_lab_results.csv')
-
-# # Define inventory fields.
-# inventory_fields = {
-#     'global_id' : 'string',
-#     'inventory_type_id': 'string',
-#     'strain_id': 'string',
-# }
-# inventory_columns = list(inventory_fields.keys())
-
-# # Define chunking parameters.
-# # inventory_type_rows = get_number_of_lines('../.datasets/Inventories_0.csv')
-# inventory_row_count = 129_920_072
-# chunk_size = 30_000_000
-# read_rows = 0
-# skiprows = None
-# datatypes = {
-#     'global_id' : 'string',
-#     'global_for_inventory_id': 'string',
-#     'lab_id': 'string',
-#     'inventory_type_id': 'string',
-#     'strain_id': 'string',
-# }
-
-# # Read in a chunk at a time, match with lab results, and save the data.
-# while read_rows < inventory_row_count:
-
-#     # Define the chunk size.
-#     if read_rows:
-#         skiprows = [i for i in range(1, read_rows)]
-
-#     # 1. Open enhanced lab results.
-#     lab_results = pd.read_csv(
-#         '../.datasets/lab_results_with_ids.csv',
-#         # index_col='global_id',
-#         dtype=datatypes
-#     )
-
-#     # 2. Read chunk of inventories.
-#     inventories = pd.read_csv(
-#         '../.datasets/Inventories_0.csv',
-#         sep='\t',
-#         encoding='utf-16',
-#         usecols=inventory_columns,
-#         dtype=inventory_fields,
-#         skiprows=skiprows,
-#         nrows=chunk_size,
-#     )
-
-#     # 3. Merge inventories with enhanced lab results.
-#     inventories.rename(columns={'global_id': 'inventory_id'}, inplace=True)
-#     lab_results = pd.merge(
-#         left=lab_results,
-#         right=inventories,
-#         how='left',
-#         left_on='global_for_inventory_id',
-#         right_on='inventory_id',
-#     )
-
-#     # Remove overlapping columns
-#     try:
-#         new_entries = lab_results[['inventory_type_id_y', 'strain_id_x']]
-#         lab_results = lab_results.combine_first(new_entries)
-#         lab_results.rename(columns={
-#             'inventory_type_id_x': 'inventory_type_id',
-#             'strain_id_x': 'strain_id',
-#         }, inplace=True)
-#     except KeyError:
-#         pass
-#     extra_columns = ['inventory_id', 'Unnamed: 0', 'inventory_type_id_y',
-#                      'strain_id_y']
-#     lab_results.drop(extra_columns, axis=1, inplace=True, errors='ignore')
-
-#     # 4. Save lab results enhanced with IDs.
-#     lab_results.to_csv('../.datasets/lab_results_with_ids.csv')
-#     read_rows += chunk_size
-#     print('Read:', read_rows)
-
-# del new_entries
-# del inventories
-# gc.collect()
+# Plot monthly sales by retailer for a time lapse video.
 

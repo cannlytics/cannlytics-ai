@@ -461,21 +461,22 @@ results_with_ids.drop([
 
 # TODO: Fill missing cannabinoid percent or mg/g.
 
-# # Calculate total cannabinoids.
-# cannabinoids_wa = [
-#     'cannabinoid_d9_thca_percent',
-#     'cannabinoid_d9_thc_percent',
-#     'cannabinoid_d8_thc_percent',
-#     'cannabinoid_thcv_percent',
-#     'cannabinoid_cbd_percent',
-#     'cannabinoid_cbda_percent',
-#     'cannabinoid_cbdv_percent',
-#     'cannabinoid_cbg_percent',
-#     'cannabinoid_cbga_percent',
-#     'cannabinoid_cbc_percent',
-#     'cannabinoid_cbn_percent',
-# ]
-# results_with_ids['total_cannabinoids'] = results_with_ids[cannabinoids_wa].sum(axis=1)
+# FIXME: Are missing values posing a problem?
+# Calculate total cannabinoids.
+cannabinoids_wa = [
+    'cannabinoid_d9_thca_percent',
+    'cannabinoid_d9_thc_percent',
+    'cannabinoid_d8_thc_percent',
+    'cannabinoid_thcv_percent',
+    'cannabinoid_cbd_percent',
+    'cannabinoid_cbda_percent',
+    'cannabinoid_cbdv_percent',
+    'cannabinoid_cbg_percent',
+    'cannabinoid_cbga_percent',
+    'cannabinoid_cbc_percent',
+    'cannabinoid_cbn_percent',
+]
+results_with_ids['total_cannabinoids'] = results_with_ids[cannabinoids_wa].sum(axis=1)
 
 # Save the complete lab results data to csv, xlsx, and json.
 results_with_ids.to_excel('../.datasets/lab_results_complete.xlsx')

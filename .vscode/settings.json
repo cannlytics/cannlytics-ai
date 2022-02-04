@@ -13,6 +13,7 @@
     "ccrs",
     "dichloromethane",
     "dotenv",
+    "dropna",
     "dtype",
     "frameon",
     "GARCH",
