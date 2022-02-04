@@ -34,7 +34,8 @@ import json
 # External imports.
 import pandas as pd
 
-from ai.augment_leaf_data.utils import get_number_of_lines
+# Internal imports
+from utils import get_number_of_lines
 
 
 def read_sales(
@@ -182,6 +183,7 @@ sale_items = pd.read_csv(
 # results_with_ids.drop(['global_id_y'], axis=1, inplace=True, errors='ignore')
 # results_with_ids.to_csv('../.datasets/augmented_sales.csv')
 
+
 #------------------------------------------------------------------------------
 # Augment sales data with inventories data.
 #------------------------------------------------------------------------------
@@ -197,6 +199,7 @@ sale_items = pd.read_csv(
 #     # parse_dates=sales_items_date_fields,
 #     nrows=1000,
 # )
+
 
 #------------------------------------------------------------------------------
 # Augment sales data with inventory type data.
@@ -304,7 +307,8 @@ results = pd.read_csv(
 # TODO: Calculate total cannabinoids.
 
 
-inventories_size = get_number_of_lines('D:/leaf-data/Inventories_0.csv')
+# inventories_size = get_number_of_lines('D:/leaf-data/Inventories_0.csv')
+inventories_size = 64_960_036
 
 # TODO: Iterate over sales items.
 daily_data = {}
@@ -314,7 +318,7 @@ for index, row in sale_items.iterrows():
     # using the created_at timestamp.
 
     # TODO: Match with inventories,
-    # reading in inventories chunk by chunk until matched
+    # reading in inventories chunk by chunk until matched.
     inventory_data = None
     while not inventories or row <= inventories_size 
         inventories = pd.read_csv(
@@ -382,4 +386,104 @@ for index, row in sale_items.iterrows():
 
 
 # Estimate a regression of price on total_cannabinoids ***
+
+
+#------------------------------------------------------------------------------
+# Get fields of interest from a large dataset.
+#------------------------------------------------------------------------------
+
+# # Define necessary lab result fields.
+# lab_result_fields = {
+#     'global_id' : 'string',
+#     'global_for_inventory_id': 'string'
+# }
+
+# # Read lab result fields necessary to connect with inventory data.
+# lab_results = read_lab_results(
+#     columns=list(lab_result_fields.keys()),
+#     fields=lab_result_fields,
+# )
+
+# # Save initial enhanced lab results.
+# lab_results.to_csv('../.datasets/augmented_lab_results.csv')
+
+# # Define inventory fields.
+# inventory_fields = {
+#     'global_id' : 'string',
+#     'inventory_type_id': 'string',
+#     'strain_id': 'string',
+# }
+# inventory_columns = list(inventory_fields.keys())
+
+# # Define chunking parameters.
+# # inventory_type_rows = get_number_of_lines('../.datasets/Inventories_0.csv')
+# inventory_row_count = 129_920_072
+# chunk_size = 30_000_000
+# read_rows = 0
+# skiprows = None
+# datatypes = {
+#     'global_id' : 'string',
+#     'global_for_inventory_id': 'string',
+#     'lab_id': 'string',
+#     'inventory_type_id': 'string',
+#     'strain_id': 'string',
+# }
+
+# # Read in a chunk at a time, match with lab results, and save the data.
+# while read_rows < inventory_row_count:
+
+#     # Define the chunk size.
+#     if read_rows:
+#         skiprows = [i for i in range(1, read_rows)]
+
+#     # 1. Open enhanced lab results.
+#     lab_results = pd.read_csv(
+#         '../.datasets/lab_results_with_ids.csv',
+#         # index_col='global_id',
+#         dtype=datatypes
+#     )
+
+#     # 2. Read chunk of inventories.
+#     inventories = pd.read_csv(
+#         '../.datasets/Inventories_0.csv',
+#         sep='\t',
+#         encoding='utf-16',
+#         usecols=inventory_columns,
+#         dtype=inventory_fields,
+#         skiprows=skiprows,
+#         nrows=chunk_size,
+#     )
+
+#     # 3. Merge inventories with enhanced lab results.
+#     inventories.rename(columns={'global_id': 'inventory_id'}, inplace=True)
+#     lab_results = pd.merge(
+#         left=lab_results,
+#         right=inventories,
+#         how='left',
+#         left_on='global_for_inventory_id',
+#         right_on='inventory_id',
+#     )
+
+#     # Remove overlapping columns
+#     try:
+#         new_entries = lab_results[['inventory_type_id_y', 'strain_id_x']]
+#         lab_results = lab_results.combine_first(new_entries)
+#         lab_results.rename(columns={
+#             'inventory_type_id_x': 'inventory_type_id',
+#             'strain_id_x': 'strain_id',
+#         }, inplace=True)
+#     except KeyError:
+#         pass
+#     extra_columns = ['inventory_id', 'Unnamed: 0', 'inventory_type_id_y',
+#                      'strain_id_y']
+#     lab_results.drop(extra_columns, axis=1, inplace=True, errors='ignore')
+
+#     # 4. Save lab results enhanced with IDs.
+#     lab_results.to_csv('../.datasets/lab_results_with_ids.csv')
+#     read_rows += chunk_size
+#     print('Read:', read_rows)
+
+# del new_entries
+# del inventories
+# gc.collect()
 

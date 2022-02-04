@@ -512,3 +512,34 @@ inventory_adjustments_date_fields = [
     'adjusted_at',
     'deleted_at',
 ]
+
+#------------------------------------------------------------------------------
+# Plants fields.
+#------------------------------------------------------------------------------
+
+plants_fields = {
+    'global_id': 'string',
+    'mme_id': 'string',
+    'user_id': 'string',
+    'external_id': 'string',
+    'inventory_id': 'string',
+    'batch_id': 'string',
+    'area_id': 'string',
+    'mother_plant_id': 'string',
+    'is_initial_inventory': 'string',
+    'origin': 'string',
+    'stage': 'string',
+    'strain_id': 'string',
+    'is_mother': 'string',
+    'last_moved_at': 'string',
+    'plant_harvested_end_at': 'string',
+    'legacy_id': 'string',
+}
+plants_date_fields = [
+    'created_at',
+    'deleted_at',
+    'updated_at',
+    'plant_created_at',
+    'plant_harvested_at',
+    'plant_harvested_end_at'
+]
