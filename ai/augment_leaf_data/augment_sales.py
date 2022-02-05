@@ -27,6 +27,7 @@ Data available at:
     - https://cannlytics.com/data/market/augmented-washington-state-sales
 """
 # Standard imports.
+from datetime import datetime
 import gc
 import json
 from typing import Any, Optional
@@ -35,46 +36,7 @@ from typing import Any, Optional
 import pandas as pd
 
 # Internal imports
-from utils import get_number_of_lines
-
-
-# def read_sales(
-#         columns=None,
-#         fields=None,
-#         date_columns=None,
-#         nrows=None,
-#         data_dir='../.datasets',
-# ):
-#     """
-#     1. Read Leaf lab results.
-#     2. Sort the data, removing null observations.
-#     3. Define a lab ID for each observation and remove attested lab results.
-#     """
-#     raise NotImplementedError
-#     # shards = []
-#     # lab_datasets = ['LabResults_0', 'LabResults_1', 'LabResults_2']
-#     # for dataset in lab_datasets:
-#     #     lab_data = pd.read_csv(
-#     #         f'{data_dir}/{dataset}.csv',
-#     #         sep='\t',
-#     #         encoding='utf-16',
-#     #         usecols=columns,
-#     #         dtype=fields,
-#     #         parse_dates=date_columns,
-#     #         nrows=nrows,
-#     #     )
-#     #     shards.append(lab_data)
-#     #     del lab_data
-#     #     gc.collect()
-#     # data = pd.concat(shards)
-#     # del shards
-#     # gc.collect()
-#     # data.dropna(subset=['global_id'], inplace=True)
-#     # # data.set_index('global_id', inplace=True)
-#     # data.sort_index(inplace=True)
-#     # data['lab_id'] = data['global_id'].map(lambda x: x[x.find('WAL'):x.find('.')])
-#     # data = data.loc[data.lab_id != '']
-#     # return data
+from utils import format_millions, get_number_of_lines
 
 
 def augment_dataset(
@@ -87,7 +49,7 @@ def augment_dataset(
         row_count: Optional[int] = None,
         sep: Optional[str] = '\t',
         encoding: Optional[str] = 'utf-16',
-        date_columns: Optional[list] = [],
+        date_columns: Optional[list] = None,
 ) -> Any:
     """Augment a given dataset with another dataset from its datafile, by
     follwing these steps:
@@ -112,7 +74,9 @@ def augment_dataset(
     """
     read_rows = 0
     skiprows = None
-    columns = list(fields.keys()) + date_columns
+    columns = list(fields.keys())
+    if date_columns:
+        columns += date_columns
     if row_count is None:
         row_count = get_number_of_lines(data_file)
     while read_rows < row_count:
@@ -141,8 +105,29 @@ def augment_dataset(
             left_on=merge_key,
             right_on=merge_key,
         )
+        column_names = list(data.columns)
+        drop_columns = []
+        rename_columns = {}
+        for name in column_names:
+            if name.endswith('_y'):
+                drop_columns.append(name)
+            if name.endswith('_x'):
+                rename_columns[name] = name.replace('_x', '')
+        try:
+            data.drop(drop_columns, axis=1, inplace=True, errors='ignore')
+        except TypeError:
+            pass
+        try:
+            data.rename(columns=rename_columns, inplace=True)
+        except TypeError:
+            pass
         read_rows += chunk_size
-        print('Augmented %i observations.' % read_rows)
+        percent_read = round(read_rows / row_count * 100)
+        print('Augmented %i / %i (%i%%) observations from %s' %
+              (format_millions(read_rows), format_millions(row_count),
+               percent_read, data_file))
+    del shard
+    gc.collect()
     return data
 
 
@@ -172,13 +157,14 @@ daily_total_sales = {}
 total_sales_by_retailer = {}
 
 # Iterate over all of the sales items.
-chunk_size = 10_000_001
+sales_chunk_size = 10_000_001
 sale_items_datasets = [
     {'file_name': 'D:/leaf-data/SaleItems_0.csv', 'rows': 90_000_001},
-    # {'file_name': 'D:/leaf-data/SaleItems_1.csv', 'rows': 90_000_001},
-    # {'file_name': 'D:/leaf-data/SaleItems_2.csv', 'rows': 90_000_001},
-    # {'file_name': 'D:/leaf-data/SaleItems_3.csv', 'rows': 76_844_111},
+    {'file_name': 'D:/leaf-data/SaleItems_1.csv', 'rows': 90_000_001},
+    {'file_name': 'D:/leaf-data/SaleItems_2.csv', 'rows': 90_000_001},
+    {'file_name': 'D:/leaf-data/SaleItems_3.csv', 'rows': 76_844_111},
 ]
+start_time = datetime.now()
 for dataset in sale_items_datasets:
 
     skip_rows = None
@@ -199,7 +185,7 @@ for dataset in sale_items_datasets:
             usecols=list(sales_items_fields.keys()) + sales_items_date_fields,
             dtype=sales_items_fields,
             parse_dates=sales_items_date_fields,
-            nrows=chunk_size,
+            nrows=sales_chunk_size,
             skiprows=skip_rows,
         )
         sale_items.rename(
@@ -208,7 +194,7 @@ for dataset in sale_items_datasets:
         )
 
         # Merge sale_items inventory_id to inventories inventory_id.
-        sale_items= augment_dataset(
+        sale_items = augment_dataset(
             sale_items,
             data_file='D:/leaf-data/Inventories_0.csv',
             fields={
@@ -218,13 +204,15 @@ for dataset in sale_items_datasets:
                 'lab_result_id': 'string',
             },
             merge_key='inventory_id',
-            chunk_size=10_000_000,
+            chunk_size=13_000_000,
             row_count=129_920_072,
+            # chunk_size=1_000_000,
+            # row_count=2_000_000,
         )
 
         # Get inventory type (global_id) with inventory_type_id to get
         # name and intermediate_type.
-        sale_items= augment_dataset(
+        sale_items = augment_dataset(
             sale_items,
             data_file='D:/leaf-data/InventoryTypes_0.csv',
             fields={
@@ -233,15 +221,17 @@ for dataset in sale_items_datasets:
                 'intermediate_type': 'string',
             },
             merge_key='inventory_type_id',
-            chunk_size=10_000_000,
+            chunk_size=28_510_000,
             row_count=57_016_229,
+            # chunk_size=1_000_000,
+            # row_count=2_000_000,
         )
         sale_items.rename(
             columns={'name': 'inventory_type_name'},
             inplace=True,
         )
 
-        # FIXME: Make this into a function.
+        # TODO: Make this into a function.
         # Match with augmented lab results to get total_cannabinoids.
         # lab_result_fields = {
         #     'lab_result_id': 'string',
@@ -263,7 +253,7 @@ for dataset in sale_items_datasets:
 
         # Optional: Lookup inventory_type_id with strain_id if the
         # inventory type is not yet identified.
-        
+
         # TODO: Calculate time between tested and sold (shelf-life).
 
         # TODO: Keep track of that intermediate_type sales.
@@ -281,7 +271,8 @@ for dataset in sale_items_datasets:
             ]
 
             #  Add price_total to the daily total sales.
-            existing_sales = daily_total_sales.get(day, {'total': 0})
+            existing_stats = daily_total_sales.get(day, {'total': 0})
+            existing_sales = existing_stats['total']
             total_sales = day_sales['price_total'].sum()
             daily_total_sales[day] = {'total': existing_sales + total_sales}
 
@@ -298,14 +289,21 @@ for dataset in sale_items_datasets:
             # TODO: If contains THC, Keep track of average price per mg of THC.
 
             # TODO: If contains CBD, Keep track of average price per mg of CBD.
-        
+
             # Optional: Keep track of shelf-life (time from testing to sale).
+
+            print('Updated stats for', day)
 
         # TODO: Save augmented sale items.
 
     # Keep track of the sale items read.
-    rows_read += chunk_size
-    print('Processed', rows_read, 'sales items')
+    rows_read += sales_chunk_size
+    percent_read = round(rows_read / number_of_rows * 100)
+    print('Processed %i / %i (%i%%) of %s.' %
+          (format_millions(rows_read), format_millions(number_of_rows),
+           percent_read, file_name))
+    run_time = datetime.now() - start_time
+    print('Run time:', run_time)
 
 
 # TODO: Save the daily total sales series.
@@ -427,4 +425,3 @@ for dataset in sale_items_datasets:
 #------------------------------------------------------------------------------
 
 # Plot monthly sales by retailer for a time lapse video.
-
