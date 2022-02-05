@@ -9,7 +9,7 @@ License: MIT License <https://opensource.org/licenses/MIT>
 
 Description: This script calculates various statistics from the sales data using
 relevant fields from the lab results, licensees, inventories,
-inventory types, and strains datasets with the lab results data.
+inventory types, and strains datasets.
 
 Data sources:
 
