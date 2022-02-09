@@ -64,6 +64,9 @@ transfer_items_size = 28_076_179
 # TODO: Analysis of inventory transfers.
 #------------------------------------------------------------------------------
 
+# Who is transferring what to whom?
+
+
 # Data Points: Calculate travel time and distance of planned route.
 
 # Figure: Create contrail map of all transfers.

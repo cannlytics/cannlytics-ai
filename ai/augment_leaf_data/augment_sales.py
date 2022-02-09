@@ -425,3 +425,11 @@ for dataset in sale_items_datasets:
 #------------------------------------------------------------------------------
 
 # Plot monthly sales by retailer for a time lapse video.
+
+
+# Plot average price of various products over time.
+
+
+# Plot the market share of various products over time.
+
+

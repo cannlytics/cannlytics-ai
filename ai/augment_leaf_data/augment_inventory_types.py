@@ -34,7 +34,7 @@ DATA_FILE = '../.datasets/InventoryTypes_0.csv'
 SAVE_FILE = '../.datasets/inventory_type_names.csv'
 
 
-def get_inventory_type_names():
+def augment_inventory_types():
     """Creates a smaller inventory types file with only the inventory type name."""
 
     # Define the number of rows.
@@ -86,4 +86,4 @@ def get_inventory_type_names():
 
 if __name__ == '__main__':
 
-    get_inventory_type_names()
+    augment_inventory_types()

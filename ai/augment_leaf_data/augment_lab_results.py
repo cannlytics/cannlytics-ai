@@ -188,8 +188,8 @@ results_with_ids = pd.read_csv('../.datasets/lab_results_with_ids.csv')
 # Uncomment if you do not already have inventory_type_names.csv:
 
 # Get only the inventory names from the inventory types data.
-# from get_inventory_type_names import get_inventory_type_names
-# get_inventory_type_names()
+# from augment_inventory_types import augment_inventory_types
+# augment_inventory_types()
 
 # Get only the results with
 results_with_ids = results_with_ids[~results_with_ids['inventory_type_id'].isna()]

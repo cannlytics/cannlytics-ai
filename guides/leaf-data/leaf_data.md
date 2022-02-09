@@ -372,7 +372,7 @@ The following are variable definitions for the open Washington State cannabis tr
 | Zipped size | 80 MB |
 | Unzipped size | 702 MB |
 | Variables | 38 |
-| Observations |  |
+| Observations | 1,959,813 |
 
 | Variable | Type | Description |
 |----------|------|-------------|
@@ -424,7 +424,7 @@ The following are variable definitions for the open Washington State cannabis tr
 | Zipped size | 1 GB |
 | Unzipped size | 15.2 GB |
 | Variables | 36 |
-| Observations |  |
+| Observations | 28,076,179 |
 
 | Variable | Type | Description |
 |----------|------|-------------|
