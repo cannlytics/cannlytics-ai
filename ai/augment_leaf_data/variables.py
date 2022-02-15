@@ -27,6 +27,7 @@ lab_result_fields = {
     'cannabinoid_cbda_percent': 'float',
     'cannabinoid_cbda_mg_g': 'float',
     'cannabinoid_cbdv_percent': 'float',
+    'cannabinoid_cbdv_mg_g': 'float',
     'cannabinoid_cbg_percent': 'float',
     'cannabinoid_cbg_mg_g': 'float',
     'cannabinoid_cbga_percent': 'float',
