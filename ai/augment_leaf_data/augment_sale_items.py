@@ -31,6 +31,7 @@ import random
 # External imports.
 import pandas as pd
 
+
 # Internal imports.
 from utils import format_millions
 
@@ -38,71 +39,71 @@ from utils import format_millions
 # Specify where the data lives.
 DATA_DIR = 'D:\\leaf-data'
 DATA_FILE = f'{DATA_DIR}/samples/random-sales-items-2022-02-18.csv'
-
+script_start = datetime.now()
 
 #--------------------------------------------------------------------------
 # Sample the data.
-# Approximate runtime:
+# Approximate runtime: 24 mins 17s
 #--------------------------------------------------------------------------
 
-# Specify the sales items metadata.
-sale_items_datasets = [
-    {'file_name': f'{DATA_DIR}/SaleItems_0.csv', 'rows': 90_000_001},
-    {'file_name': f'{DATA_DIR}/SaleItems_1.csv', 'rows': 90_000_001},
-    {'file_name': f'{DATA_DIR}/SaleItems_2.csv', 'rows': 90_000_001},
-    {'file_name': f'{DATA_DIR}/SaleItems_3.csv', 'rows': 76_844_111},
-]
-sales_items_fields = {
-    'price_total': 'float',
-    'sale_id': 'string',
-    'mme_id': 'string',
-    'inventory_id': 'string',
-    'qty': 'float',
-    'uom': 'string',
-    'name': 'string',
-}
-sales_items_date_fields = [
-    'created_at',
-]
+# # Specify the sales items metadata.
+# sale_items_datasets = [
+#     {'file_name': f'{DATA_DIR}/SaleItems_0.csv', 'rows': 90_000_001},
+#     {'file_name': f'{DATA_DIR}/SaleItems_1.csv', 'rows': 90_000_001},
+#     {'file_name': f'{DATA_DIR}/SaleItems_2.csv', 'rows': 90_000_001},
+#     {'file_name': f'{DATA_DIR}/SaleItems_3.csv', 'rows': 76_844_111},
+# ]
+# sales_items_fields = {
+#     'price_total': 'float',
+#     'sale_id': 'string',
+#     'mme_id': 'string',
+#     'inventory_id': 'string',
+#     'qty': 'float',
+#     'uom': 'string',
+#     'name': 'string',
+# }
+# sales_items_date_fields = [
+#     'created_at',
+# ]
 
-# Specify the time range to calculate statistics.
-daily_total_sales = {}
-time_range = pd.date_range(start='2021-02-01', end='2021-11-30')
+# # Specify the time range to calculate statistics.
+# daily_total_sales = {}
+# time_range = pd.date_range(start='2021-02-01', end='2021-11-30')
 
-# Read a sample of each chunk of each sales items datafile.
-# Optional: Determine the optimal sample size.
-start = datetime.now()
-random.seed(420)
-percent = 0.001
-samples = []
-for dataset in sale_items_datasets:
+# # Read a sample of each chunk of each sales items datafile.
+# # Optional: Determine the optimal sample size.
+# start = datetime.now()
+# random.seed(420)
+# percent = 0.001
+# samples = []
+# for dataset in sale_items_datasets:
 
-    # Read a random portion of each chunk in the dataset.
-    number_of_rows = dataset['rows']
-    file_name = dataset['file_name']
-    sample = pd.read_csv(
-        file_name,
-        sep='\t',
-        encoding='utf-16',
-        usecols=list(sales_items_fields.keys()) + sales_items_date_fields,
-        dtype=sales_items_fields,
-        parse_dates=sales_items_date_fields,
-        skiprows=lambda i: i > 0 and random.random() > percent
-    )
-    sample.rename(
-        columns={'name': 'product_name'},
-        inplace=True,
-    )
-    samples.append(sample)
-    print('Sampled:', len(sample))
+#     # Read a random portion of each chunk in the dataset.
+#     number_of_rows = dataset['rows']
+#     file_name = dataset['file_name']
+#     sample = pd.read_csv(
+#         file_name,
+#         sep='\t',
+#         encoding='utf-16',
+#         usecols=list(sales_items_fields.keys()) + sales_items_date_fields,
+#         dtype=sales_items_fields,
+#         parse_dates=sales_items_date_fields,
+#         skiprows=lambda i: i > 0 and random.random() > percent
+#     )
+#     sample.rename(
+#         columns={'name': 'product_name'},
+#         inplace=True,
+#     )
+#     samples.append(sample)
+#     print('Sampled:', len(sample))
 
-# Combine all samples.
-data = pd.concat(samples)
+# # Combine all samples.
+# data = pd.concat(samples)
 
-# Save the random sample for future use.
-data.to_csv(DATA_FILE, index=False)
-end = datetime.now()
-print('Time to sample the data:', print(end - start))
+# # Save the random sample for future use.
+# data.to_csv(DATA_FILE, index=False)
+# end = datetime.now()
+# print('Time to sample the data:', end - start)
 
 
 #--------------------------------------------------------------------------
@@ -115,7 +116,7 @@ start = datetime.now()
 data = pd.read_csv(DATA_FILE)
 
 # Add sales type from sales data.
-chunk_size = 10_000_001
+chunk_size = 25_000_001
 sales_datasets = [
     {'file_name': f'{DATA_DIR}/Sales_0.csv', 'rows': 100_000_001},
     {'file_name': f'{DATA_DIR}/Sales_1.csv', 'rows': 100_000_001},
@@ -180,7 +181,8 @@ data.rename(columns={
 # Save the data.
 data.to_csv(DATA_FILE, index=False)
 end = datetime.now()
-print('Time to augment with sales data:', print(end - start))
+print('Time to augment with sales data:', end - start)
+
 
 #------------------------------------------------------------------------------
 # Augment the data with inventory data.
@@ -279,7 +281,8 @@ while read_rows < row_count:
 # Save the data.
 data.to_csv(DATA_FILE, index=False)
 end = datetime.now()
-print('Time to augment with inventory data:', print(end - start))
+print('Time to augment with inventory data:', end - start)
+
 
 #--------------------------------------------------------------------------
 # Augment the data with inventory type data.
@@ -364,7 +367,7 @@ while read_rows < row_count:
 # Save the data.
 data.to_csv(DATA_FILE, index=False)
 end = datetime.now()
-print('Time to augment with inventory types:', print(end - start))
+print('Time to augment with inventory types:', end - start)
 
 
 #--------------------------------------------------------------------------
@@ -509,7 +512,7 @@ data.drop(['global_id'], axis=1, inplace=True)
 # Save the data.
 data.to_csv(DATA_FILE, index=False)
 end = datetime.now()
-print('Time to augment with lab results:', print(end - start))
+print('Time to augment with lab results:', end - start)
 
 
 #--------------------------------------------------------------------------
@@ -597,30 +600,13 @@ data = pd.merge(
 # Save the data.
 data.to_csv(DATA_FILE, index=False)
 end = datetime.now()
-print('Time to augment with strain names:', print(end - start))
+print('Time to augment with strain names:', end - start)
 
 
 #--------------------------------------------------------------------------
-# Analyze the data.
+# Fin.
 #--------------------------------------------------------------------------
 
-# Read in the random sample.
-# data = pd.read_csv(DATA_FILE)
-
-# TODO: Determine wholesale vs retail transactions.
-# data = data.loc[data['sale_type'] != 'wholesale']
-
-# TODO: Drop observations with negative prices? or prices > $1000?
-# data = data.loc[data.price_total > 0]
-
-# TODO: Estimate the average_price by sample type.
-
-
-#--------------------------------------------------------------------------
-# Visualize the data.
-#--------------------------------------------------------------------------
-
-# TODO: Look at the probability density functions (.pdfs) of the data.
-
-
-# TODO: Create choropleths of average price by zip code for each sample type.
+print('Finished augmenting {:,} observations.'.format(len(data)))
+script_end = datetime.now()
+print('Total runtime:', script_end - script_start)
