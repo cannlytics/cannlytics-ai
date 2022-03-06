@@ -1,6 +1,6 @@
 """
 Calculate Sale Statistics | Cannabis Data Science Meetup Group
-Copyright (c) 2021 Cannlytics
+Copyright (c) 2021-2022 Cannlytics
 
 Authors: Keegan Skeate <keegan@cannlytics.com>
 Created: 2/10/2022
@@ -408,9 +408,9 @@ def read_lab_results(
     df = df.loc[df.lab_id != '']
     return df
 
-# Read in the random sample.
-start = datetime.now()
-data = pd.read_csv(DATA_FILE)
+# # Read in the random sample.
+# start = datetime.now()
+# data = pd.read_csv(DATA_FILE)
 
 # Add lab result data.
 lab_result_date_columns = ['created_at']
@@ -551,6 +551,17 @@ data = pd.merge(
     left_on='producer_mme_id',
     right_on='producer_mme_id'
 )
+
+# Remove '_y' columns.
+column_names = list(data.columns)
+drop_columns = []
+for name in column_names:
+    if name.endswith('_y'):
+        drop_columns.append(name)
+try:
+    data.drop(drop_columns, axis=1, inplace=True, errors='ignore')
+except TypeError:
+    pass
 
 # Save the data.
 data.to_csv(DATA_FILE, index=False)
